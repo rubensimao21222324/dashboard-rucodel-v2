@@ -1,0 +1,42 @@
+# --- Segredos e dados: NUNCA para o Git --------------------------------------
+*.dpapi
+client_secret*.json
+central_config.json
+vigilante_config.json
+encarregado.json
+consulta.json
+.env
+.env.*
+!.env.exemplo
+dados_locais/
+execucao/
+backups/
+runtime/
+.venv/
+# --- Dados gerados pela aplicação ----------------------------------------------
+*.sqlite3
+*.jsonl
+*.log
+copias_seguranca/
+backups_atualizacao/
+backups_visual/
+fotos_gestao/
+fotos_setores/
+ensino_fotos/
+jantes_fotos/
+relatorios/
+dados_openwebui/
+gestao_leitura.json
+setores_cache.json
+producao.json
+notas_producao.json
+colaboradores.json
+vigilante_estado.json
+copias_estado.json
+alertas_estado.json
+# --- Lixo ----------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.antes_*
+*.tmp
+Thumbs.db

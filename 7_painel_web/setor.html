@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Jarvis · Setores</title>
+<style>
+:root{--bg:#0b0d12;--panel:#141821;--panel2:#1b2030;--line:#ffffff14;--ink:#eef0f4;--muted:#9aa1ad;--gold:#ddbd80;--green:#27c48a;--red:#e5484d;--amber:#f5a524;--font:'Segoe UI',Inter,Roboto,Arial,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px var(--font)}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:#0f121a;flex-wrap:wrap}
+.sector{background:var(--panel2);border:1px solid #ddbd8055;color:var(--gold);border-radius:12px;padding:10px 16px;font-size:20px;font-weight:650;letter-spacing:.3px}
+.worker{background:#27c48a14;border:1px solid #27c48a66;color:var(--ink);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:600;text-align:left;line-height:1.25}
+.worker small{display:block;font-size:12px;color:var(--green);font-weight:600}
+.worker.none{background:#f5a52414;border-color:#f5a52466;color:var(--amber)}
+.names{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.names button{min-height:84px;border-radius:14px;border:1px solid #ffffff22;background:var(--panel2);font-size:22px;font-weight:650;line-height:1.2}
+.names button small{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:4px}
+.names .admin{grid-column:1/-1;min-height:56px;font-size:16px;color:var(--muted)}
+table.sum{width:100%;border-collapse:collapse;font-size:16px;margin-top:6px}
+table.sum th,table.sum td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right}
+table.sum th:first-child,table.sum td:first-child{text-align:left}
+table.sum th{color:var(--muted);font-weight:600;font-size:13px}
+table.sum td.sec{color:var(--gold);font-weight:650;text-align:left;padding-top:16px}
+.left{display:flex;align-items:baseline;gap:8px;background:#ffffff08;border:1px solid #ffffff1a;border-radius:12px;padding:8px 14px;white-space:nowrap}
+.left strong{font-size:26px;font-weight:700;color:var(--amber)}
+.left span{font-size:13px;color:var(--muted)}
+.left b{color:var(--ink);font-weight:650}
+.board h3{margin:4px 0 8px;font-size:13px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;font-weight:600}
+.board .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{position:relative;background:var(--panel);border:1px solid #ffffff1a;border-radius:10px;padding:7px 8px;min-height:64px}
+.tile b{display:block;font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:22px}
+.tile strong{display:block;font-size:26px;font-weight:700;line-height:1.1;margin-top:2px}
+.tile small{font-size:10px;color:var(--muted)}
+.tile .medal{position:absolute;top:4px;right:5px;font-size:14px}
+.tile.me{border-color:var(--green);background:#27c48a12}
+.tile.first strong{color:var(--gold)}
+.board .team-total{margin-top:8px;font-size:13px;color:var(--muted)}
+@media (max-width:900px){.board .grid{grid-template-columns:repeat(5,1fr)}.tile strong{font-size:24px}}
+@media (max-width:520px){.board .grid{grid-template-columns:repeat(3,1fr)}.left strong{font-size:20px}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.chip{background:transparent;border:1px solid #ffffff24;border-radius:999px;padding:9px 16px;font-size:15px;color:var(--muted)}
+.chip.on{background:var(--gold);color:#1e1d18;border-color:var(--gold);font-weight:650}
+.chip b{font-weight:700;margin-left:6px}
+.status{font-size:13px;color:var(--muted);text-align:right;min-width:120px}
+.status strong{display:block;font-size:22px;color:var(--ink);font-weight:500}
+main{display:grid;grid-template-columns:330px 1fr;min-height:0}
+.pad{border-right:1px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:#0e1118;overflow:auto}
+.pad label{font-size:13px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+.display{height:74px;border-radius:14px;background:var(--panel);border:1px solid #ffffff1f;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:40px;font-weight:600;letter-spacing:2px}
+.display span:empty:before{content:'Nº cliente';font-size:18px;color:#5d6472;font-weight:400;letter-spacing:0}
+.display small{font-size:13px;color:var(--muted);letter-spacing:0;font-weight:400;max-width:130px;text-align:right}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.keys button{height:62px;border-radius:14px;border:1px solid #ffffff1a;background:var(--panel2);font-size:30px;font-weight:550}
+.keys button:active{background:#2a3146}
+.keys .fn{font-size:20px;color:var(--muted)}
+.hint{font-size:13px;color:#6b7280;line-height:1.5;margin-top:auto}
+.list{overflow:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;align-content:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;grid-template-columns:140px 1fr;gap:14px;position:relative}
+.infobtn{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid #ddbd8055;background:#0b0d12cc;color:var(--gold,#ddbd80);font:700 16px Georgia,serif;font-style:italic;display:grid;place-items:center;z-index:2}
+.infobtn.on{background:#ddbd80;color:#141821}
+.route{position:absolute;top:48px;right:8px;left:8px;z-index:5;background:#0f1218f7;border:1px solid #ddbd8066;border-radius:14px;padding:12px 14px;box-shadow:0 14px 40px #000c}
+.route h4{margin:0 0 8px;font-size:14px;font-weight:600;color:var(--muted)}.route .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--muted);font-size:20px;width:32px;height:32px}
+.route .step{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid #ffffff10;font-size:15px}
+.route .step b{font-weight:600}.route .step.me b:after{content:' · este ecrã';font-weight:400;font-size:12px;color:var(--muted)}
+.route .st{font-size:13px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap}
+.route .st.ok{background:#1f3b2c;color:#7fe0a6}.route .st.run{background:#3d1d1d;color:#ff8f8f}.route .st.wait{background:#3a2d12;color:#f1c36b}.route .st.na{background:#ffffff10;color:var(--muted)}
+.route small{display:block;margin-top:8px;font-size:12px;color:var(--muted)}
+.card.late{border-color:#e5484d66;background:linear-gradient(#e5484d0f,#e5484d0f),var(--panel)}
+.card.running{border-color:#27c48a88;box-shadow:0 0 0 1px #27c48a44 inset;background:linear-gradient(#27c48a12,#27c48a12),var(--panel)}
+.photo{width:140px;height:140px;border-radius:12px;object-fit:cover;background:#0b0d12;border:1px solid #ffffff10}
+.who{font-size:22px;font-weight:700;line-height:1.15}
+.who small{display:block;font-size:14px;color:var(--muted);font-weight:500;margin-top:3px}
+.meta{font-size:15px;color:#cfd3da;margin-top:8px;line-height:1.45}
+.meta .cor{color:var(--gold)}
+.due{display:inline-block;margin-top:8px;font-size:13px;font-weight:650;padding:4px 9px;border-radius:7px;background:#ffffff10;color:var(--muted)}
+.due.late{background:#e5484d22;color:#ff8a8d}.due.today{background:#f5a52422;color:var(--amber)}
+.note{grid-column:1/-1;font-size:14px;color:#cfd3da;background:#ffffff08;border-radius:10px;padding:8px 10px}
+.counter{grid-column:1/-1;display:grid;grid-template-columns:84px 1fr 84px;align-items:center;gap:10px}
+.counter button{height:72px;border-radius:14px;border:1px solid #ffffff22;background:var(--panel2);font-size:38px;font-weight:600}
+.counter button:active{background:#2a3146}.counter button[disabled]{opacity:.35}
+.count{text-align:center;font-size:40px;font-weight:650;letter-spacing:1px}
+.count small{font-size:22px;color:var(--muted);font-weight:500}
+.count.full{color:var(--green)}
+.go{grid-column:1/-1;height:64px;border-radius:14px;border:0;font-size:20px;font-weight:750;letter-spacing:.6px;text-transform:uppercase}
+.go.play{background:var(--amber);color:#1d1404}.go.done{background:#27c48a22;color:var(--green);display:flex;align-items:center;justify-content:center}.go.stop{background:var(--red);color:#fff}
+.go[disabled]{opacity:.5}
+.others{grid-column:1/-1;margin-top:10px;padding:10px 4px 2px;border-top:1px dashed #ffffff26;color:var(--muted);font-size:15px;font-weight:600}
+.card.other{opacity:.8;border-style:dashed}.card.other .where{font-weight:700;color:var(--gold,#ddbd80);font-size:16px;margin-bottom:4px}
+.empty.short{padding:24px 20px}
+.empty{grid-column:1/-1;white-space:pre-line;text-align:center;color:var(--muted);padding:60px 20px;font-size:18px;line-height:1.6}
+.busy{opacity:.55;pointer-events:none}
+dialog{background:#141821;color:var(--ink);border:1px solid #ddbd8055;border-radius:20px;padding:24px;width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:#000b}
+dialog h2{margin:0 0 6px;font-size:24px;font-weight:600}
+dialog p{white-space:pre-line;color:var(--muted);margin:0 0 18px;font-size:16px;line-height:1.5}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.choices button{height:70px;border-radius:14px;border:1px solid #ffffff22;background:var(--panel2);font-size:20px;font-weight:600}
+.choices .boss{grid-column:1/-1;background:transparent;border-color:var(--gold);color:var(--gold)}
+.choices .back{grid-column:1/-1;height:52px;background:transparent;font-size:16px;color:var(--muted)}
+.row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.row button{height:58px;padding:0 22px;border-radius:12px;border:1px solid #ffffff22;background:var(--panel2);font-size:18px;font-weight:600}
+.row .yes{background:var(--gold);color:#1e1d18;border-color:var(--gold)}
+.row .yes.stop{background:var(--red);color:#fff;border-color:var(--red)}
+.row .yes.play{background:var(--amber);color:#1d1404;border-color:var(--amber)}
+.pin{font-size:36px;letter-spacing:12px;text-align:center;height:64px;margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1d2333;border:1px solid #ffffff22;border-radius:14px;padding:14px 20px;font-size:17px;max-width:calc(100vw - 32px);box-shadow:0 20px 60px #000a}
+.toast.err{border-color:#e5484d;color:#ffb3b5}
+@media (max-width:900px){main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.pad{border-right:0;border-bottom:1px solid var(--line)}.keys button{height:58px}.hint{display:none}}
+@media (max-width:520px){.card{grid-template-columns:110px 1fr}.photo{width:110px;height:110px}.list{grid-template-columns:1fr;padding:12px}.status{display:none}}
+@media (max-width:900px){header .chips{order:5;flex:1 1 100%}}
+
+/* Compacto: mais serviços no ecrã (cartões mais pequenos, botões continuam fáceis de tocar) */
+main{grid-template-columns:280px 1fr}
+.pad{padding:12px}
+.keys{gap:8px}.keys button{height:54px;font-size:26px}
+.display{height:60px;font-size:32px}
+.list{grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:10px;padding:12px}
+.card{grid-template-columns:84px 1fr;gap:10px;padding:10px;border-radius:14px}
+.photo{width:84px;height:84px;border-radius:10px}
+.who{font-size:18px}.who small{font-size:12px;margin-top:2px}
+.meta{font-size:13px;margin-top:4px;line-height:1.35}
+.due{font-size:12px;margin-top:5px;padding:3px 7px}
+.note{font-size:12px;padding:6px 8px}
+.counter{grid-template-columns:58px 1fr 58px;gap:8px}
+.counter button{height:54px;font-size:30px;border-radius:12px}
+.count{font-size:30px}.count small{font-size:17px}
+.go{height:50px;font-size:15px;border-radius:12px;letter-spacing:.3px}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+@media (max-width:520px){.card{grid-template-columns:84px 1fr}.photo{width:84px;height:84px}}
+
+/* Teclado fixo: a página não desliza; só a lista de serviços tem barra de deslocar */
+html,body{overflow:hidden;overscroll-behavior:none;height:100%}
+.app{height:100vh;height:100dvh}
+main{min-height:0;overflow:hidden}
+.pad{overflow:hidden;user-select:none;-webkit-user-select:none}
+.pad>label,.pad>.display,.pad>.keys{touch-action:none}
+.keys button,.counter button,.go,.chip,.sector,.worker{touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.pad{min-height:0}.pad>*{flex-shrink:0}
+.pad>.padScroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px;margin-right:-6px;padding-right:6px}
+.padScroll .zgrid button{touch-action:pan-y}
+.list{overscroll-behavior:contain;min-height:0}
+@media (max-width:900px){main{grid-template-rows:auto minmax(0,1fr)}}
+.zones h3{margin:2px 0 6px;font-size:13px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;font-weight:600}
+.zgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.zgrid button{min-height:44px;border-radius:10px;border:1px solid #ffffff1f;background:var(--panel2);font-size:13px;font-weight:600;text-align:left;padding:6px 9px;line-height:1.2;overflow:hidden}
+.zgrid button b{float:right;color:var(--muted);font-weight:700;margin-left:6px}
+.zgrid button.on{background:var(--gold);color:#1e1d18;border-color:var(--gold)}.zgrid button.on b{color:#1e1d18}
+.zgrid .all{grid-column:1/-1;min-height:40px;text-align:center}
+@media (max-width:900px){.zgrid{grid-template-columns:repeat(4,1fr)}}
+
+/* ADS: zone in France + their client number */
+.subs{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.subs span{font-size:13px;color:var(--muted);margin-right:2px}
+.subs button{flex:1;min-width:64px;height:46px;border-radius:12px;border:1px solid #ffffff22;background:var(--panel2);font-size:17px;font-weight:700}
+.subs button small{display:block;font-size:11px;font-weight:500;color:var(--muted)}
+.subs button.on{background:var(--gold);color:#1e1d18;border-color:var(--gold)}.subs button.on small{color:#1e1d18}
+.subtag{display:inline-block;margin:5px 0 0 6px;font-size:12px;font-weight:700;padding:3px 7px;border-radius:7px;background:#5b8cff26;color:#a9c2ff}
+/* damage assessment */
+.assess{grid-column:1/-1;height:40px;border-radius:10px;border:1px dashed #ffffff33;background:transparent;font-size:14px;font-weight:600;color:var(--muted)}
+.hold{grid-column:1/-1;height:40px;border-radius:10px;border:1px solid #e5484d55;background:transparent;font-size:14px;font-weight:650;color:#ff9a9d}
+.hold.on{background:#e5484d;color:#fff;border-color:#e5484d}
+div.hold{display:grid;place-items:center;text-align:center}
+.assess.done{border-style:solid;border-color:#5b8cff66;color:#a9c2ff;background:#5b8cff14}
+#evalBox{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;padding:18px}
+.q{margin:0 0 12px}.q b{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.q div{display:flex;gap:8px;flex-wrap:wrap}
+.q button{flex:1 1 auto;min-height:48px;padding:0 12px;border-radius:12px;border:1px solid #ffffff22;background:var(--panel2);font-size:16px;font-weight:600}
+.q button.on{background:var(--gold);color:#1e1d18;border-color:var(--gold)}
+.q.must b:after{content:' *';color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <button class="sector" id="sector" type="button">Escolher setor</button>
+    <button class="worker" id="worker" type="button" hidden></button>
+    <div class="chips" id="chips"></div>
+    <div class="left" id="left" hidden></div>
+    <div class="status" id="status"><strong id="clock">--:--</strong><span id="read">—</span></div>
+  </header>
+  <main>
+    <section class="pad" aria-label="Número de cliente">
+      <label>Número de cliente</label>
+      <div class="display"><span id="client"></span><small id="clientName"></small></div>
+      <div class="subs" id="subs" hidden></div>
+      <div class="keys" id="keys"></div>
+      <div class="padScroll" id="padScroll">
+      <section class="zones" id="zones" hidden><h3>Zonas</h3><div class="zgrid" id="zgrid"></div></section>
+      <section class="board" id="board" hidden><h3>Hoje no setor</h3><div class="grid" id="tiles"></div><div class="team-total" id="teamTotal"></div></section>
+      </div>
+    </section>
+    <section class="list" id="list" aria-live="polite"><div class="empty">A carregar…</div></section>
+  </main>
+</div>
+<dialog id="pick"><h2 id="pickTitle">Que setor é este ecrã?</h2><p id="pickText">Fica memorizado neste aparelho.</p><div class="choices" id="choices"></div></dialog>
+<dialog id="pinBox"><h2 id="pinTitle">PIN do setor</h2><p id="pinText">Pedido só uma vez neste aparelho.</p><div class="display pin" id="pinShow"></div><div class="keys" id="pinKeys"></div><div class="row"><button type="button" id="pinCancel">Cancelar</button><button type="button" class="yes" id="pinOk">Entrar</button></div></dialog>
+<dialog id="whoBox"><h2>Quem és?</h2><p>Cada jante que marcares com + fica contada em teu nome.</p><div class="names" id="names"></div></dialog>
+<dialog id="sumBox"><h2>Jantes por colaborador</h2><p id="sumWhen"></p><div id="sumBody"></div><div class="row"><button type="button" id="sumClose">Fechar</button></div></dialog>
+<dialog id="confirm"><h2 id="cTitle"></h2><p id="cText"></p><div class="row"><button type="button" id="cNo">Não</button><button type="button" class="yes" id="cYes">Sim</button></div></dialog>
+<dialog id="evalBox"><h2 id="evalTitle">Avaliar jante</h2><p id="evalText"></p><div id="evalQs"></div><div class="row"><button type="button" id="evalNo">Cancelar</button><button type="button" class="yes" id="evalYes">Guardar</button></div></dialog>
+<div class="toast" id="toast" hidden></div>
+<script>
+const $=id=>document.getElementById(id);
+const BASE=location.pathname.startsWith('/setores')?'/setores':'';const ADMIN=!!BASE;
+const el=(t,c='',x='')=>{const e=document.createElement(t);if(c)e.className=c;if(x!=='')e.textContent=x;return e;};
+const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
+const S={subZone:'',subNum:'',questions:null,zone:'',team:[],totals:{},worker:'',idle:15,lastTouch:Date.now(),all:[],pending:0,sector:+store.get(ADMIN?'jarvis-setor-admin':'jarvis-setor')||0,sectors:[],boss:false,client:'',filter:'todos',rows:[],today:'',busy:false};
+let toastTimer;
+function toast(t,err=false){const b=$('toast');b.textContent=t;b.hidden=false;b.classList.toggle('err',err);clearTimeout(toastTimer);toastTimer=setTimeout(()=>b.hidden=true,err?7000:2600);}
+async function api(path,body){
+  const r=await fetch(BASE+path,body?{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-Jarvis-Setor':'1'},body:JSON.stringify(body)}:{credentials:'same-origin'});
+  const j=await r.json().catch(()=>({erro:'Resposta inválida.'}));
+  if(r.status===401&&j.pin){await askPin();return api(path,body);}
+  if(!r.ok)throw Error(j.erro||(j.error&&(j.error.message||j.error))||'O pedido falhou.');return j;
+}
+if(ADMIN)document.addEventListener('DOMContentLoaded',()=>{const b=document.querySelector('header');const a=el('a','chip','← Jarvis');a.href='/';a.style.textDecoration='none';b.prepend(a);});
+function sectorName(){const s=S.sectors.find(x=>x.id===S.sector);return s?s.nome:'Escolher setor';}
+async function chooseSector(force){
+  if(!S.sectors.length){const d=await api('/api/setores');S.sectors=d.setores;}
+  if(!S.sectors.length){$('list').replaceChildren(el('div','empty','Ainda não há setores configurados.\nNo PC do Jarvis corre CONFIGURAR_SETORES.cmd.'));return false;}
+  if(!force&&S.sectors.some(x=>x.id===S.sector)){$('sector').textContent=sectorName();return true;}
+  return pickSector(false);
+}
+function pickSector(boss){
+  const box=$('choices');box.replaceChildren();
+  $('pickTitle').textContent=boss?'Que setor quer assumir?':'Que setor é este ecrã?';
+  $('pickText').textContent=boss?'Encarregado · pode trocar de setor quando quiser.':'Fica memorizado neste aparelho.';
+  return new Promise(res=>{S.sectors.forEach(s=>{const b=el('button','',s.nome);b.type='button';b.onclick=async()=>{if(!boss)await dropBoss();S.sector=s.id;S.boss=boss;if(boss)S.worker='Encarregado';else if(S.worker==='Encarregado')S.worker='';store.set(ADMIN?'jarvis-setor-admin':'jarvis-setor',String(s.id));$('sector').textContent=s.nome;$('pick').close();res(true);};box.append(b);});
+    if(!ADMIN){if(boss){const x=el('button','back','← Voltar');x.type='button';x.onclick=()=>{$('pick').close();pickSector(false).then(res);};box.append(x);}
+      else{const e=el('button','boss','👷 Encarregado');e.type='button';e.onclick=async()=>{$('pick').close();try{await askBoss();pickSector(true).then(res);}catch{pickSector(false).then(res);}};box.append(e);}}
+    if(!$('pick').open)$('pick').showModal();});
+}
+// O acesso de encarregado só vale enquanto o modo está ativo neste ecrã: ao recarregar ou escolher um setor normal, é apagado.
+function dropBoss(){return ADMIN?Promise.resolve():api('/api/sair_encarregado',{}).catch(()=>{});}
+function askBoss(){return new Promise((res,rej)=>{pinValue='';$('pinShow').textContent='';$('pinTitle').textContent='Senha do encarregado';$('pinText').textContent='Depois escolhe o setor que quer assumir.';$('pinBox').showModal();
+  $('pinOk').onclick=async()=>{try{await api('/api/encarregado',{pin:pinValue});$('pinBox').close();res();}catch(e){pinValue='';$('pinShow').textContent='';toast(e.message,true);}};
+  $('pinCancel').onclick=()=>{$('pinBox').close();rej(Error('cancelado'));};});}
+function keypad(target,onKey){['1','2','3','4','5','6','7','8','9','⌫','0','✕'].forEach(k=>{const b=el('button',/[⌫✕]/.test(k)?'fn':'',k);b.type='button';b.onclick=()=>onKey(k);target.append(b);});}
+let pinValue='';
+function askPin(){return new Promise((res,rej)=>{pinValue='';$('pinShow').textContent='';$('pinTitle').textContent='PIN do setor '+sectorName();$('pinText').textContent='Pedido só uma vez neste aparelho.';$('pinBox').showModal();
+  $('pinOk').onclick=async()=>{try{await api('/api/entrar',{setor:S.sector,pin:pinValue});$('pinBox').close();res();}catch(e){pinValue='';$('pinShow').textContent='';toast(e.message,true);}};
+  $('pinCancel').onclick=()=>{$('pinBox').close();rej(Error('PIN necessário para usar este setor.'));};});}
+function dayDiff(iso){if(!iso)return null;const a=new Date(iso+'T12:00:00'),b=new Date((S.today||new Date().toISOString().slice(0,10))+'T12:00:00');return Math.round((a-b)/864e5);}
+function dueText(iso){const d=dayDiff(iso);if(d===null)return['',''];if(d<0)return['Atrasado '+(-d)+(d===-1?' dia':' dias'),'late'];if(d===0)return['Hoje','today'];if(d===1)return['Amanhã',''];
+  return[new Intl.DateTimeFormat('pt-PT',{weekday:'long',day:'numeric',month:'2-digit'}).format(new Date(iso+'T12:00:00')),''];}
+const FILTERS=[['todos','Todos',()=>true],['atrasados','Atrasados',r=>dayDiff(r.prazo)<0],['hoje','Hoje',r=>dayDiff(r.prazo)===0],['amanha','Amanhã',r=>dayDiff(r.prazo)===1],['seguintes','Seguintes',r=>dayDiff(r.prazo)>1]];
+// --- collaborators -------------------------------------------------------------
+const workerKey=()=>'jarvis-colab-'+(ADMIN?'admin-':'')+S.sector;
+function counts(name){const n=(S.totals[name]||{}).total||0;return n+(n===1?' jante':' jantes')+' hoje';}
+// Zones of the services in this sector (from the management site), as a first filter. Short names: «13 Aveiro».
+function shortZone(z){return (z||'Sem zona').replace(/\s+H-?\S+/,'').replace(/\(.*?\)/g,'').replace(/\s+/g,' ').trim();}
+function renderZones(){const box=$('zones'),grid=$('zgrid');const counts={};byClient().forEach(r=>{const z=r.zona||'Sem zona';counts[z]=(counts[z]||0)+r.quantidade;});
+  const names=Object.keys(counts).sort((a,b)=>a.localeCompare(b,'pt',{numeric:true}));if(names.length<2&&!S.zone){box.hidden=true;return;}box.hidden=false;grid.replaceChildren();
+  const all=el('button','all'+(S.zone?'':' on'),'Todas as zonas');all.type='button';all.onclick=()=>{S.zone='';render();};grid.append(all);
+  names.forEach(z=>{const b=el('button',S.zone===z?'on':'',shortZone(z));b.type='button';b.title=z;b.append(el('b','',String(counts[z])));b.onclick=()=>{S.zone=S.zone===z?'':z;render();};grid.append(b);});}
+function renderBoard(){const box=$('board');if(!S.team.length){box.hidden=true;return;}box.hidden=false;
+  const rows=S.team.map(n=>({n,t:S.totals[n]||{total:0,Maquinada:0,Pintada:0,Outro:0}})).sort((a,b)=>b.t.total-a.t.total||a.n.localeCompare(b.n));
+  const tiles=$('tiles');tiles.replaceChildren();let sum=0;
+  rows.forEach((r,i)=>{sum+=r.t.total;const t=el('div','tile'+(r.n===S.worker?' me':'')+(i===0&&r.t.total>0?' first':''));
+t.append(el('b','',r.n),el('strong','',String(r.t.total)),el('small','',r.t.Maquinada+' maq · '+r.t.Pintada+' pint'));tiles.append(t);});
+  $('teamTotal').textContent='Equipa: '+sum+' jantes hoje';}
+function renderLeft(){const b=$('left');const rows=(S.rows||[]).filter(FILTERS.find(x=>x[0]===S.filter)[2]);if(!S.all.length){b.hidden=true;return;}b.hidden=false;
+  const total=rows.reduce((a,r)=>a+r.quantidade,0),done=rows.reduce((a,r)=>a+Math.min(r.contador,r.quantidade),0);b.replaceChildren();
+  b.append(el('span','','Faltam'),el('strong','',String(total-done)),el('span','','de '));b.lastChild.append(el('b','',String(total)),document.createTextNode(' jantes'+(S.client?' do cliente':'')));}
+function renderWorker(){renderBoard();const b=$('worker');if(!S.team.length&&!S.boss){b.hidden=true;return;}b.hidden=false;b.replaceChildren();
+  if(S.boss){b.className='worker';b.append(document.createTextNode('👷 Encarregado'),el('small','','Toca para sair'));}
+  else if(S.worker){b.className='worker';b.append(document.createTextNode('👤 '+S.worker),el('small','',counts(S.worker)+' · Trocar'));}
+  else{b.className='worker none';b.append(document.createTextNode(ADMIN?'👤 Administrador':'👤 Quem és?'),el('small','',ADMIN?'Escolher colaborador':'Toca para escolher'));}}
+async function loadTeam(){try{const d=await api('/api/colaboradores?setor='+S.sector);S.team=d.nomes||[];S.totals=d.hoje||{};S.idle=d.sair_min||0;}catch{S.team=[];}
+  const saved=store.get(workerKey());S.worker=S.boss?'Encarregado':saved&&S.team.includes(saved)?saved:'';renderWorker();}
+function chooseWorker(){if(!S.team.length||S.boss)return Promise.resolve();const box=$('names');box.replaceChildren();
+  return new Promise(res=>{S.team.forEach(n=>{const b=el('button','',n);b.type='button';b.append(el('small','',counts(n)));b.onclick=()=>{S.worker=n;store.set(workerKey(),n);S.lastTouch=Date.now();$('whoBox').close();renderWorker();res();};box.append(b);});
+    if(ADMIN){const a=el('button','admin','Continuar como administrador (sem colaborador)');a.type='button';a.onclick=()=>{S.worker='';store.set(workerKey(),'');$('whoBox').close();renderWorker();res();};box.append(a);}
+    $('whoBox').showModal();});}
+async function needWorker(){if(S.team.length&&!S.worker&&!ADMIN)await chooseWorker();return !S.team.length||!!S.worker||ADMIN;}
+async function showSummary(){const d=await api('/api/resumo');const body=$('sumBody');body.replaceChildren();$('sumWhen').textContent='Cada + conta uma jante; cada − tira uma. Semana desde segunda-feira.';
+  const t=el('table','sum');const h=el('tr');['Colaborador','Hoje','Semana','Mês'].forEach(x=>h.append(el('th','',x)));t.append(h);
+  const secs=new Set([...Object.keys(d.mes||{}),...Object.keys(d.hoje||{})]);if(!secs.size){body.append(el('p','','Ainda não há jantes marcadas por colaboradores.'));return $('sumBox').showModal();}
+  secs.forEach(sec=>{const r=el('tr');const c=el('td','sec',(d.setores||{})[sec]||('Setor '+sec));c.colSpan=4;r.append(c);t.append(r);
+    const names=new Set([...Object.keys((d.mes||{})[sec]||{}),...Object.keys((d.hoje||{})[sec]||{})]);
+    names.forEach(n=>{const row=el('tr');const v=p=>{const x=((d[p]||{})[sec]||{})[n];return x?x.total+' ('+x.Maquinada+'M · '+x.Pintada+'P)':'0';};row.append(el('td','',n),el('td','',v('hoje')),el('td','',v('semana')),el('td','',v('mes')));t.append(row);});});
+  body.append(t);$('sumBox').showModal();}
+document.addEventListener('pointerdown',()=>{S.lastTouch=Date.now();},true);
+setInterval(()=>{if(S.idle>0&&S.worker&&!ADMIN&&Date.now()-S.lastTouch>S.idle*60000){if(S.boss){leaveBoss();return;}S.worker='';store.set(workerKey(),'');renderWorker();}},20000);
+function byZone(rows){return S.zone?rows.filter(r=>(r.zona||'Sem zona')===S.zone):rows;}
+function byClientOnly(){if(!S.client)return S.all;const exact=S.all.filter(r=>r.cliente===S.client);return exact.length?exact:S.all.filter(r=>r.cliente.startsWith(S.client));}
+function byClient(){const rows=byClientOnly();if(!S.subZone)return rows;return rows.filter(r=>r.sub&&r.sub.zona===S.subZone&&(!S.subNum||r.sub.num===S.subNum||r.sub.num.startsWith(S.subNum)));}
+// ADS (5): after the client number, choose the zone in France (1/2/3) and type their client number.
+function renderSubs(){const box=$('subs');const rows=S.client?S.all.filter(r=>r.cliente===S.client&&r.sub):[];if(!rows.length){box.hidden=true;S.subZone='';S.subNum='';return;}
+  box.hidden=false;box.replaceChildren(el('span','','Zona'));const n={};rows.forEach(r=>{n[r.sub.zona]=(n[r.sub.zona]||0)+r.quantidade;});
+  ['1','2','3'].forEach(z=>{const b=el('button',S.subZone===z?'on':'',z);b.type='button';b.append(el('small','',(n[z]||0)+' jantes'));b.onclick=()=>{S.subZone=S.subZone===z?'':z;S.subNum='';showClient();render();};box.append(b);});}
+function showClient(){$('client').style.fontSize=S.subZone?'24px':'';$('client').style.whiteSpace='nowrap';$('client').textContent=S.client+(S.subZone?' › '+S.subZone+(S.subNum?' › '+S.subNum:' › …'):'');}
+function renderChips(){const box=$('chips');box.replaceChildren();FILTERS.forEach(([k,label,f])=>{const n=S.rows.filter(f).length;const b=el('button','chip'+(S.filter===k?' on':''),label);b.type='button';b.append(el('b','',String(n)));b.onclick=()=>{S.filter=k;render();};box.append(b);});}
+function render(){
+  renderSubs();renderZones();S.rows=byZone(byClient());renderChips();renderLeft();const f=FILTERS.find(x=>x[0]===S.filter)[2];const rows=S.rows.filter(f);const box=$('list');box.replaceChildren();
+  $('clientName').textContent=S.client&&rows[0]?.nome?rows[0].nome:'';
+  if(S.client&&!S.subZone)otherSectors(S.client,box);
+  if(!rows.length){const e=el('div','empty',S.client?'Nenhum serviço do cliente '+S.client+' neste setor'+(S.filter!=='todos'?' com este filtro':'')+'.':'Sem serviços neste filtro.');box.append(e);if(S.client&&!S.subZone&&!S.rows.length)whereElse(S.client,e);return;}
+  rows.forEach(r=>{
+    const [due,dueCls]=dueText(r.prazo);
+    const c=el('article','card'+(dueCls==='late'?' late':'')+(r.estado==='stop'?' running':''));
+    const img=el('img','photo');img.alt='Jante';img.loading='lazy';img.src=BASE+'/api/foto?setor='+S.sector+'&chave='+r.chave;img.onerror=()=>{img.removeAttribute('src');};
+    const info=el('div');const who=el('div','who',r.cliente||'—');if(r.nome)who.append(el('small','',r.nome));
+    const meta=el('div','meta');meta.append(el('span','',r.quantidade+'× '+(r.tamanho?r.tamanho+'"':'')),document.createTextNode(' · '),el('span','cor',r.cor||'sem cor'));meta.append(el('br'),document.createTextNode(r.tipo));
+    info.style.paddingRight='30px';const ib=el('button','infobtn','i');ib.type='button';ib.title='Por onde já passou';ib.setAttribute('aria-label','Por onde já passou esta jante');ib.onclick=e=>{e.stopPropagation();showRoute(r,c,ib);};c.append(ib);
+    info.append(who,meta,el('span','due '+dueCls,due));if(r.zona&&!S.zone){const zt=el('span','due',shortZone(r.zona));zt.style.marginLeft='6px';info.append(zt);}c.append(img,info);if(r.sub)info.append(el('span','subtag','França '+r.sub.zona+' · '+r.sub.num));
+    const txt=[r.descricao,r.nota].filter(Boolean).join(' · ');if(txt)c.append(el('div','note',txt));
+    const ct=el('div','counter');const minus=el('button','','−');minus.type='button';minus.disabled=r.contador<=0;const plus=el('button','','+');plus.type='button';plus.disabled=r.contador>=r.quantidade;
+    const cnt=el('div','count'+(r.contador>=r.quantidade?' full':''),String(r.contador));cnt.append(el('small','',' / '+r.quantidade));
+    minus.onclick=()=>act(r,'menos',c);plus.onclick=()=>act(r,'mais',c);ct.append(minus,cnt,plus);c.append(ct);
+    if(r.estado==='play'||r.estado==='stop'){const full=r.contador===r.quantidade;const go=el('button','go '+r.estado,full?(r.estado==='play'?'▶ Iniciar ':'■ Terminar ')+sectorName():'Conta até '+r.quantidade+'/'+r.quantidade);go.type='button';go.disabled=!full;go.onclick=()=>confirmGo(r,c);c.append(go);}
+    else if(r.estado==='done')c.append(el('div','go done','✓ Feito neste setor'));
+    if(!ADMIN){if(r.proxima_carga)c.append(el('div','hold on','⛔ Não vai · fica para a próxima carga'));}  // workshop: information only
+    else if(r.sub||r.cliente==='5'){const h=el('button','hold'+(r.proxima_carga?' on':''),r.proxima_carga?'⛔ Não vai · fica para a próxima carga (tocar para anular)':'Não vai nesta carga');h.type='button';h.onclick=()=>holdLoad(r);c.append(h);}
+    if(ADMIN){const rv=r.avaliacao&&r.avaliacao.respostas||{};
+    const ev=el('button','assess'+(r.avaliacao?' done':''),r.avaliacao?'✓ Avaliada'+(rv.dano?' · dano '+rv.dano:'')+': '+(r.avaliacao.decisao||'—')+' · alterar':'🔎 Avaliar dano');ev.type='button';ev.onclick=()=>assess(r);c.append(ev);}  // damage assessment: administrator only
+    box.append(c);});
+}
+// ⓘ: estado da jante nos outros departamentos (Torno, Pó, Pintura…), numa caixinha por cima do cartão.
+function closeRoute(){document.querySelectorAll('.route').forEach(x=>x.remove());document.querySelectorAll('.infobtn.on').forEach(x=>x.classList.remove('on'));}
+function routeState(s){if(s==='play')return['wait','Por fazer'];if(s==='stop')return['run','Em curso'];if(!s)return['na','Sem estado'];return['ok','✓ Feito'];}
+async function showRoute(r,card,btn){const open=btn.classList.contains('on');closeRoute();if(open)return;btn.classList.add('on');
+  const box=el('div','route');box.onclick=e=>e.stopPropagation();const x=el('button','x','×');x.type='button';x.onclick=closeRoute;box.append(x,el('h4','','Por onde já passou'),el('div','step',''));box.lastChild.textContent='A ver…';card.append(box);
+  try{const d=await api('/api/percurso?setor='+S.sector+'&chave='+r.chave);if(!box.isConnected)return;box.lastChild.remove();
+    if(!d.percurso.length)box.append(el('small','','Ainda sem informação. Volta a tocar daqui a um minuto.'));
+    d.percurso.forEach(p=>{const row=el('div','step'+(p.este?' me':''));const [cls,txt]=routeState(p.este?r.estado:p.estado);
+      const right=el('span','st '+cls,txt+(p.contador!=null&&p.quantidade&&cls!=='ok'?' · '+p.contador+'/'+p.quantidade:''));row.append(el('b','',p.nome),right);box.append(row);});
+    if(!d.completo)box.append(el('small','','Percurso completo depois da próxima leitura do programa (poucos minutos).'));}
+  catch(e){if(box.isConnected){box.lastChild.textContent=e.message;}}}
+document.addEventListener('click',e=>{if(!e.target.closest('.route,.infobtn'))closeRoute();});
+async function holdLoad(r){
+  if(!(await needWorker()))return;const value=!r.proxima_carga;
+  if(value){$('cTitle').textContent='Não vai nesta carga?';$('cText').textContent='Cliente '+r.cliente+(r.sub?' · zona '+r.sub.zona+' · '+r.sub.num:'')+' · '+r.quantidade+'× '+r.tamanho+'"\nFica marcada para a próxima carga.';
+    const yes=$('cYes');yes.className='yes stop';yes.textContent='Sim, fica';$('confirm').showModal();$('cNo').onclick=()=>$('confirm').close();
+    const ok=await new Promise(res=>{yes.onclick=()=>{$('confirm').close();res(true);};$('cNo').onclick=()=>{$('confirm').close();res(false);};});if(!ok)return;}
+  try{await api('/api/carga',{setor:S.sector,chave:r.chave,valor:value,colaborador:S.worker});r.proxima_carga=value;toast(value?'Fica para a próxima carga':'Volta a ir nesta carga');render();}catch(e){toast(e.message,true);}}
+async function assess(r){
+  if(!(await needWorker()))return;
+  try{if(!S.questions)S.questions=(await api('/api/perguntas')).perguntas;}catch(e){return toast(e.message,true);}
+  const answers={...((r.avaliacao||{}).respostas||{})};const qs=$('evalQs');qs.replaceChildren();
+  $('evalTitle').textContent='Avaliar · cliente '+r.cliente+(r.sub?' ('+r.sub.zona+' · '+r.sub.num+')':'');
+  $('evalText').textContent=r.quantidade+'× '+(r.tamanho||'')+'" · '+(r.cor||'')+' · '+r.tipo;
+  S.questions.forEach(q=>{const w=el('div','q'+(q.obrigatoria?' must':''));w.append(el('b','',q.texto));const row=el('div');
+    q.opcoes.forEach(o=>{const b=el('button',answers[q.id]===o?'on':'',o);b.type='button';b.onclick=()=>{answers[q.id]=answers[q.id]===o?'':o;[...row.children].forEach(x=>x.classList.toggle('on',answers[q.id]===x.textContent));};row.append(b);});
+    w.append(row);qs.append(w);});
+  $('evalBox').showModal();$('evalNo').onclick=()=>$('evalBox').close();
+  $('evalYes').onclick=async()=>{const miss=S.questions.find(q=>q.obrigatoria&&!answers[q.id]);if(miss)return toast('Falta: '+miss.texto,true);
+    try{const d=await api('/api/avaliar',{setor:S.sector,chave:r.chave,respostas:answers,colaborador:S.worker});
+      r.avaliacao={decisao:answers.decisao,respostas:d.avaliacao.respostas};$('evalBox').close();toast('Avaliação guardada');render();}catch(e){toast(e.message,true);}};}
+function confirmGo(r,card){const start=r.estado==='play';$('cTitle').textContent=(start?'Iniciar ':'Terminar ')+sectorName()+'?';
+  $('cText').textContent=(r.zona?shortZone(r.zona)+' · ':'')+'Cliente '+r.cliente+(r.nome?' ('+r.nome+')':'')+' · '+r.quantidade+'× '+r.tamanho+'" · '+(r.cor||'')+(start?'':'\nContador: '+r.contador+' / '+r.quantidade);
+  const yes=$('cYes');yes.className='yes '+(start?'play':'stop');yes.textContent=start?'Sim, iniciar':'Sim, terminar';$('confirm').showModal();
+  $('cNo').onclick=()=>$('confirm').close();yes.onclick=()=>{$('confirm').close();act(r,start?'iniciar':'terminar',card);};}
+// + / − change the screen at once and are sent to the program in order behind the scenes; a failure puts the number back.
+let queue=Promise.resolve();
+async function act(r,action,card){
+  if(!(await needWorker()))return;
+  if(action==='mais'||action==='menos'){
+    const before=r.contador,next=before+(action==='mais'?1:-1);if(next<0||next>r.quantidade)return;
+    r.contador=next;S.pending++;const who=S.worker;
+    if(who){const t=S.totals[who]||(S.totals[who]={total:0,Maquinada:0,Pintada:0,Outro:0});const g=/maquinad/i.test(r.tipo)?'Maquinada':/pintad/i.test(r.tipo)?'Pintada':'Outro';const k=action==='mais'?1:-1;t.total+=k;t[g]+=k;renderWorker();}
+    render();
+    queue=queue.then(()=>api('/api/acao',{setor:S.sector,acao:action,chave:r.chave,colaborador:who})).then(()=>{},e=>{r.contador=before;toast(e.message,true);render();loadTeam();}).finally(()=>{S.pending--;});
+    return;}
+  if(S.busy)return;S.busy=true;card.classList.add('busy');
+  queue=queue.then(()=>api('/api/acao',{setor:S.sector,acao:action,chave:r.chave,colaborador:S.worker})).then(()=>{r.estado=action==='iniciar'?'stop':'';toast(action==='iniciar'?'Iniciado no programa':'Terminado no programa');render();},e=>toast(e.message,true)).finally(()=>{S.busy=false;card.classList.remove('busy');});}
+const whereCache={},otherCache={};
+// Pesquisa por cliente: mostra também as jantes deste cliente que estão noutros setores (só para ver, sem botões).
+async function otherSectors(client,box){
+  const show=items=>{if(S.client!==client||!box.isConnected||box.querySelector('.others')||!items.length)return;
+    const head=el('div','others',client+' · noutros setores (não estão aqui) · '+items.reduce((a,r)=>a+r.quantidade,0)+' jantes');box.querySelector('.empty')?.classList.add('short');box.append(head);
+    items.forEach(r=>{const [due,dueCls]=dueText(r.prazo);const c=el('article','card other');
+      const img=el('img','photo');img.alt='Jante';img.loading='lazy';img.src=BASE+'/api/foto?setor='+r.setores[0].id+'&chave='+r.chave;img.onerror=()=>{img.removeAttribute('src');};
+      const info=el('div');const meta=el('div','meta');meta.append(el('span','',r.quantidade+'× '+(r.tamanho?r.tamanho+'"':'')),document.createTextNode(' · '),el('span','cor',r.cor||'sem cor'));meta.append(el('br'),document.createTextNode(r.tipo));
+      info.append(el('div','where','📍 '+r.setores.map(x=>x.nome+' '+x.contador+'/'+r.quantidade).join(' · ')),meta,el('span','due '+dueCls,due));c.append(img,info);if(r.descricao)c.append(el('div','note',r.descricao));box.append(c);});};
+  const hit=otherCache[client];if(hit&&Date.now()-hit.t<15000)return show(hit.list);
+  try{const d=await api('/api/procura?setor='+S.sector+'&cliente='+client);otherCache[client]={t:Date.now(),list:d.servicos||[]};show(d.servicos||[]);}catch{}}
+async function whereElse(client,box){
+  const show=list=>{if(S.client!==client||!box.isConnected)return;const other=list.filter(x=>x.id!==S.sector);
+    box.textContent+=other.length?'\n\nEstá noutro setor: '+other.map(x=>x.nome+' ('+x.jantes+' jante'+(x.jantes===1?'':'s')+')').join(', ')+'.'
+      :'\n\nNão está em nenhum setor do dashboard.\nSe o talão já foi tirado, confirma se foi enviado para o dashboard no programa.';};
+  const hit=whereCache[client];if(hit&&Date.now()-hit.t<15000)return show(hit.list);
+  try{const d=await api('/api/onde?setor='+S.sector+'&cliente='+client);whereCache[client]={t:Date.now(),list:d.setores||[]};show(d.setores||[]);}catch{}}
+let loading=false;
+async function load(fresh){if(loading||!S.sector)return;loading=true;
+  try{const d=await api('/api/servicos?setor='+S.sector+(fresh?'&atualizar=1':''));S.today=d.hoje;$('read').textContent='Lido do programa às '+d.lido.slice(0,5);
+    if(!S.busy&&!S.pending){S.all=d.servicos;render();}
+    if(S.team.length&&!S.pending){try{const t=await api('/api/colaboradores?setor='+S.sector);S.totals=t.hoje||{};renderWorker();}catch{}}}
+  catch(e){$('read').textContent='Sem ligação';if(!S.rows.length)$('list').replaceChildren(el('div','empty',e.message));}
+  finally{loading=false;}}
+keypad($('keys'),k=>{
+  if(k==='✕'){S.client='';S.subZone='';S.subNum='';}
+  else if(S.subZone){if(k==='⌫'){if(S.subNum)S.subNum=S.subNum.slice(0,-1);else S.subZone='';}else if(S.subNum.length<4)S.subNum+=k;}
+  else if(k==='⌫')S.client=S.client.slice(0,-1);else if(S.client.length<6)S.client+=k;
+  showClient();render();});
+keypad($('pinKeys'),k=>{if(k==='⌫')pinValue=pinValue.slice(0,-1);else if(k==='✕')pinValue='';else if(pinValue.length<8)pinValue+=k;$('pinShow').textContent='•'.repeat(pinValue.length);});
+$('sector').onclick=async()=>{if(await (S.boss?pickSector(true):chooseSector(true))){S.all=[];render();await loadTeam();load(true);if(!ADMIN&&S.team.length&&!S.worker)chooseWorker();}};
+async function leaveBoss(){S.boss=false;S.worker='';await dropBoss();toast('Saiu do modo encarregado');S.all=[];render();await loadTeam();load(true);}
+$('worker').onclick=()=>S.boss?leaveBoss():chooseWorker();$('sumClose').onclick=()=>$('sumBox').close();
+if(ADMIN)document.addEventListener('DOMContentLoaded',()=>{const b=el('button','chip','📊 Colaboradores');b.type='button';b.onclick=()=>showSummary().catch(e=>toast(e.message,true));document.querySelector('.status').before(b);});
+setInterval(()=>{$('clock').textContent=new Intl.DateTimeFormat('pt-PT',{hour:'2-digit',minute:'2-digit'}).format(new Date());},1000);
+setInterval(()=>{if(!document.hidden&&!S.busy&&!S.pending&&!document.querySelector('dialog[open],.route'))load(false);},6000);
+(async()=>{try{await dropBoss();if(await chooseSector(false)){await loadTeam();await load(true);if(!ADMIN&&S.team.length&&!S.worker)chooseWorker();}}catch(e){$('list').replaceChildren(el('div','empty',e.message));}})();
+</script>
+</body>
+</html>

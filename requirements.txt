@@ -1,0 +1,6 @@
+# Dependências de terceiros que o código do Jarvis Central realmente importa
+# (apuradas por leitura de todos os imports; o resto é biblioteca padrão do Python).
+pillow>=10        # miniaturas das fotografias (gestao_rucodel.py)
+openpyxl>=3.1     # listas em Excel (gestao_rucodel.py)
+reportlab>=4      # listas em PDF (gestao_rucodel.py)
+edge-tts>=7,<8    # voz pt-PT Duarte/Raquel (central.py)

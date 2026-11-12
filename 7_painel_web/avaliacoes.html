@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Jarvis · Avaliações</title>
+<style>
+:root{--bg:#0b0d12;--panel:#141821;--panel2:#1b2030;--line:#ffffff14;--ink:#eef0f4;--muted:#9aa1ad;--gold:#ddbd80;--red:#ff6b6e;--amber:#f5a524;--green:#27c48a;--blue:#a9c2ff;--font:'Segoe UI',Inter,Roboto,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px var(--font)}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:22px;font-weight:600;margin-right:auto}h1 span{color:var(--gold)}
+button,input{font:inherit;color:inherit}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid #ffffff22;background:var(--panel2);cursor:pointer;font-weight:600}
+.chip.on{background:var(--gold);color:#1e1d18;border-color:var(--gold)}
+input{height:36px;border-radius:10px;border:1px solid #ffffff22;background:var(--panel);padding:0 12px;width:150px}
+main{padding:16px 20px;display:grid;gap:16px}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:default}
+.box.click{cursor:pointer}.box.on{border-color:var(--gold)}
+.box small{display:block;color:var(--muted);font-size:12px;letter-spacing:.3px}
+.box strong{display:block;font-size:30px;font-weight:700;line-height:1.15;margin-top:2px}
+h2{margin:6px 0 8px;font-size:16px;color:var(--gold);font-weight:600}
+.wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #ffffff0d;vertical-align:top}
+th{position:sticky;top:0;background:var(--panel2);font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+tr:hover td{background:#ffffff05}
+.d{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font-weight:800;color:#111}
+.d1{background:#27c48a}.d2{background:#9ad35a}.d3{background:#f5d14a}.d4{background:#f5a524}.d5{background:#ff6b6e}
+.step{font-weight:650}.muted{color:var(--muted);font-size:13px}
+.sub{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;padding:2px 6px;border-radius:6px;background:#5b8cff26;color:var(--blue)}
+.held{display:inline-block;font-size:12px;font-weight:700;padding:2px 6px;border-radius:6px;background:#e5484d;color:#fff}
+.ph{width:72px;height:72px;border-radius:10px;object-fit:cover;background:#ffffff08;display:block;cursor:zoom-in}
+.ent{display:block;margin-top:4px;font-size:13px;color:var(--gold);font-weight:600}
+#big{border:0;padding:0;background:transparent;max-width:96vw;max-height:94vh}#big::backdrop{background:#000d}#big img{max-width:96vw;max-height:94vh;border-radius:14px;display:block}
+.empty{color:var(--muted);padding:30px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>Avaliações das <span>jantes</span></h1>
+  <div id="days"></div>
+  <input id="q" placeholder="Nº cliente" inputmode="numeric">
+  <button class="chip" id="reload" type="button">↻</button>
+</header>
+<main>
+  <section class="boxes" id="boxes"></section>
+  <section id="held"></section>
+  <section><h2 id="listTitle">Avaliações</h2><div class="wrap" id="list"><div class="empty">A carregar…</div></div></section>
+</main>
+<dialog id="big"><img id="bigImg" alt=""></dialog>
+<script>
+const $=id=>document.getElementById(id);
+const el=(t,c='',x='')=>{const e=document.createElement(t);if(c)e.className=c;if(x!=='')e.textContent=x;return e;};
+const S={days:7,step:'',data:null};
+const DAYS=[[1,'Hoje'],[7,'7 dias'],[30,'30 dias'],[0,'Tudo']];
+function renderDays(){const b=$('days');b.replaceChildren();DAYS.forEach(([n,l])=>{const c=el('button','chip'+(S.days===n?' on':''),l);c.type='button';c.onclick=()=>{S.days=n;load();};b.append(c);});}
+function when(s){if(!s)return'';const d=new Date(s.replace(' ','T'));return d.toLocaleDateString('pt-PT',{day:'2-digit',month:'2-digit'})+' '+s.slice(11,16);}
+function jante(e){return (e.quantidade||'')+'× '+(e.tamanho?String(e.tamanho).replace(/\.0+$/,'')+'"':'')+' · '+(e.cor||'sem cor');}
+function entrada(s){if(!s)return'';const d=s.slice(8,10)+'/'+s.slice(5,7)+(s.length>10?' '+s.slice(11,16):'');return'Entrada no programa: '+d;}
+function photo(e,setor){const td=el('td');if(!e.servico)return td;const img=el('img','ph');img.loading='lazy';img.alt='';
+  img.src='/setores/api/foto?setor='+(setor||e.setor)+'&chave='+e.servico;img.onerror=()=>img.replaceWith(el('div','ph'));
+  img.onclick=()=>{$('bigImg').src=img.src;$('big').showModal();};td.append(img);return td;}
+$('big').onclick=()=>$('big').close();
+function client(e){const f=document.createDocumentFragment();f.append(document.createTextNode(e.cliente||'—'));if(e.sub)f.append(el('span','sub','França '+e.sub.zona+' · '+e.sub.num));if(e.entrada)f.append(el('span','ent',entrada(e.entrada)));return f;}
+function render(){const d=S.data;if(!d)return;const q=$('q').value.replace(/\D/g,'');
+  const all=d.avaliacoes.filter(e=>!q||e.cliente===q||String(e.cliente).startsWith(q));
+  const rows=all.filter(e=>!S.step||(e.respostas||{}).decisao===S.step);
+  // boxes
+  const boxes=$('boxes');boxes.replaceChildren();
+  const dano=all.map(e=>+((e.respostas||{}).dano||0)).filter(Boolean);
+  const add=(label,value,step)=>{const b=el('div','box'+(step!==undefined?' click':'')+(step!==undefined&&S.step===step?' on':''));b.append(el('small','',label),el('strong','',String(value)));
+    if(step!==undefined)b.onclick=()=>{S.step=S.step===step?'':step;render();};boxes.append(b);};
+  add('Avaliadas',all.length,'');add('Dano médio',dano.length?(dano.reduce((a,b)=>a+b,0)/dano.length).toFixed(1):'—');
+  const step=(d.perguntas.find(p=>p.id==='decisao')||{opcoes:[]}).opcoes;
+  step.forEach(o=>add(o,all.filter(e=>(e.respostas||{}).decisao===o).length,o));
+  add('ADS · próxima carga',d.proxima_carga.length);
+  // held for the next load
+  const h=$('held');h.replaceChildren();
+  if(d.proxima_carga.length){h.append(el('h2','','ADS · ficam para a próxima carga ('+d.proxima_carga.reduce((a,e)=>a+(e.quantidade||0),0)+' jantes)'));
+    const w=el('div','wrap');const t=el('table');t.innerHTML='<tr><th>Foto</th><th>Marcada</th><th>Cliente</th><th>Jante</th><th>Nota</th><th>Quem</th><th>Setor</th></tr>';
+    d.proxima_carga.forEach(e=>{const r=el('tr');const c=el('td');c.append(client(e));r.append(photo(e,e.foto_setor),el('td','',when(e.quando)),c,el('td','',jante(e)),el('td','muted',e.nota||''),el('td','',e.colaborador||'—'),el('td','',e.setor_nome||''));t.append(r);});
+    w.append(t);h.append(w);}
+  // table
+  $('listTitle').textContent='Avaliações'+(S.step?' · '+S.step:'')+' ('+rows.length+')';
+  const box=$('list');box.replaceChildren();if(!rows.length){box.append(el('div','empty','Ainda não há avaliações neste período.'));return;}
+  const other=d.perguntas.filter(p=>!['dano','decisao'].includes(p.id));
+  const t=el('table');t.innerHTML='<tr><th>Foto</th><th>Avaliada</th><th>Cliente</th><th>Jante</th><th>Dano</th><th>Próximo passo</th><th>Outras respostas</th><th>Quem</th><th>Setor</th></tr>';
+  rows.forEach(e=>{const a=e.respostas||{};const r=el('tr');const c=el('td');c.append(client(e));if(e.proxima_carga){c.append(el('br'),el('span','held','Próxima carga'));}
+    const j=el('td');j.append(document.createTextNode(jante(e)),el('br'),el('span','muted',e.tipo||''));
+    const dn=el('td');if(a.dano)dn.append(el('span','d d'+a.dano,a.dano));else dn.textContent='—';
+    const o=el('td','muted',other.filter(p=>a[p.id]).map(p=>p.texto.replace(/\s*\(.*\)/,'')+': '+a[p.id]).join(' · ')||'—');
+    r.append(photo(e,e.foto_setor),el('td','',when(e.quando)),c,j,dn,el('td','step',a.decisao||'—'),o,el('td','',e.colaborador||'—'),el('td','',e.setor_nome||''));t.append(r);});
+  box.append(t);}
+async function load(){renderDays();try{const r=await fetch('/setores/api/avaliacoes'+(S.days?'?dias='+S.days:''),{credentials:'same-origin',cache:'no-store'});const j=await r.json();
+  if(!r.ok)throw Error((j.error&&j.error.message)||j.error||'Sem dados.');S.data=j;render();}catch(e){$('list').replaceChildren(el('div','empty',e.message));}}
+$('q').oninput=render;$('reload').onclick=load;load();setInterval(()=>{if(!document.hidden)load();},60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0b0d12">
+<title>Jarvis · Ações a corrigir</title>
+<style>
+:root{--bg:#0b0d12;--panel:#141821;--panel2:#1b2030;--line:#ffffff14;--ink:#eef0f4;--muted:#9aa1ad;--gold:#ddbd80;--red:#ff6b6e;--green:#27c48a;--font:'Segoe UI',Inter,Roboto,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px var(--font)}
+button,textarea{font:inherit;color:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:22px;font-weight:600;margin-right:auto}h1 span{color:var(--gold)}
+main{max-width:900px;margin:0 auto;padding:18px 20px 40px;display:grid;gap:18px}
+.add{background:var(--panel);border:1px solid #ddbd8040;border-radius:16px;padding:14px;display:grid;gap:10px}
+.add label{font-size:13px;color:var(--muted)}
+textarea{width:100%;min-height:96px;resize:vertical;border-radius:12px;border:1px solid #ffffff22;background:#0a0e16;padding:12px 14px;line-height:1.5;font-size:17px}
+textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+.row{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.gold{height:46px;padding:0 22px;border-radius:12px;border:1px solid var(--gold);background:var(--gold);color:#1e1d18;font-weight:700;font-size:16px}
+.ghost{height:40px;padding:0 14px;border-radius:10px;border:1px solid #ffffff22;background:var(--panel2);font-weight:600;font-size:14px}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid #ffffff22;background:var(--panel2);font-weight:600;font-size:14px}
+.chip.on{background:var(--gold);color:#1e1d18;border-color:var(--gold)}
+.msg{font-size:14px;color:var(--red);margin-right:auto}
+h2{margin:0;font-size:16px;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:10px}
+h2 .chips{margin-left:auto;display:flex;gap:6px}
+.list{display:grid;gap:10px}
+.item{display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.check{flex:none;width:34px;height:34px;border-radius:10px;border:2px solid #ddbd8080;background:transparent;display:grid;place-items:center;font-weight:800;color:#1e1d18;margin-top:1px}
+.item.done .check{background:var(--green);border-color:var(--green)}
+.body{flex:1;min-width:0}
+.text{font-size:17px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.item.done .text{text-decoration:line-through;color:var(--muted)}
+.meta{font-size:12px;color:var(--muted);margin-top:4px}
+.tools{display:flex;gap:6px;flex:none}
+.tools button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-size:15px}
+.tools button.del:hover{border-color:var(--red)}
+.edit textarea{min-height:70px;margin-bottom:8px}
+.empty{color:var(--muted);padding:26px;text-align:center;border:1px dashed var(--line);border-radius:14px}
+@media(max-width:560px){header,main{padding-left:14px;padding-right:14px}.item{flex-wrap:wrap}.tools{width:100%;justify-content:flex-end}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Ações a <span>corrigir</span></h1>
+  <button class="chip" id="reload" type="button" aria-label="Atualizar">↻</button>
+</header>
+<main>
+  <form class="add" id="add">
+    <label for="texto">Nova ação a corrigir</label>
+    <textarea id="texto" maxlength="2000" placeholder="O que é preciso corrigir…" autofocus></textarea>
+    <div class="row"><span class="msg" id="msg"></span><button class="gold" type="submit">Guardar</button></div>
+  </form>
+  <section>
+    <h2><span id="title">Por corrigir</span><span class="chips" id="filters"></span></h2>
+    <div class="list" id="list" style="margin-top:10px"><div class="empty">A carregar…</div></div>
+  </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const el=(t,c='',x='')=>{const e=document.createElement(t);if(c)e.className=c;if(x!=='')e.textContent=x;return e;};
+const S={items:[],filter:'abertas',editing:null};
+const FILTERS=[['abertas','Por corrigir'],['feitas','Corrigidas'],['todas','Todas']];
+async function api(body){
+  const r=await fetch('/acoes/lista',body===undefined?{credentials:'same-origin'}:{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(d.error?.message||d.error||'Não foi possível guardar. Tenta outra vez.');
+  S.items=d.acoes||[];render();return d;
+}
+function date(s){return s?s.slice(8,10)+'/'+s.slice(5,7)+' '+s.slice(11,16):'';}
+function render(){
+  const f=$('filters');f.replaceChildren();
+  const open=S.items.filter(a=>!a.feita).length,done=S.items.length-open;
+  FILTERS.forEach(([k,l])=>{const n=k==='abertas'?open:k==='feitas'?done:S.items.length;const c=el('button','chip'+(S.filter===k?' on':''),l+' · '+n);c.type='button';c.onclick=()=>{S.filter=k;render();};f.append(c);});
+  $('title').textContent=FILTERS.find(x=>x[0]===S.filter)[1];
+  const rows=S.items.filter(a=>S.filter==='todas'||(S.filter==='feitas'?a.feita:!a.feita));
+  const list=$('list');list.replaceChildren();
+  if(!rows.length){list.append(el('div','empty',S.filter==='feitas'?'Ainda nada corrigido.':'Nada por corrigir. 👍'));return;}
+  rows.forEach(a=>{
+    const item=el('div','item'+(a.feita?' done':''));
+    const chk=el('button','check',a.feita?'✓':'');chk.type='button';chk.title=a.feita?'Voltar a pôr por corrigir':'Marcar como corrigida';chk.setAttribute('aria-label',chk.title);
+    chk.onclick=()=>run({acao:'feita',id:a.id,feita:!a.feita});
+    const body=el('div','body');
+    if(S.editing===a.id){
+      const box=el('div','edit'),ta=el('textarea');ta.value=a.texto;ta.maxLength=2000;
+      const r=el('div','row'),cancel=el('button','ghost','Cancelar'),save=el('button','gold','Guardar');cancel.type=save.type='button';
+      cancel.onclick=()=>{S.editing=null;render();};save.onclick=()=>run({acao:'editar',id:a.id,texto:ta.value}).then(ok=>{if(ok){S.editing=null;render();}});
+      r.append(cancel,save);box.append(ta,r);body.append(box);setTimeout(()=>ta.focus(),0);
+    }else{
+      body.append(el('div','text',a.texto),el('div','meta','Criada '+date(a.criada)+(a.feita&&a.feita_em?' · corrigida '+date(a.feita_em):'')));
+    }
+    const tools=el('div','tools');
+    if(S.editing!==a.id){
+      const ed=el('button','','✏️');ed.type='button';ed.title='Editar';ed.setAttribute('aria-label','Editar');ed.onclick=()=>{S.editing=a.id;render();};
+      const del=el('button','del','🗑');del.type='button';del.title='Apagar';del.setAttribute('aria-label','Apagar');
+      del.onclick=()=>{if(del.dataset.sure){run({acao:'apagar',id:a.id});}else{del.dataset.sure='1';del.textContent='?';del.title='Toca outra vez para apagar';setTimeout(()=>{if(del.isConnected){delete del.dataset.sure;del.textContent='🗑';del.title='Apagar';}},3000);}};
+      tools.append(ed,del);
+    }
+    item.append(chk,body,tools);list.append(item);
+  });
+}
+async function run(body){try{await api(body);$('msg').textContent='';return true;}catch(e){$('msg').textContent=e.message;return false;}}
+$('add').addEventListener('submit',async e=>{
+  e.preventDefault();const t=$('texto').value.trim();
+  if(!t){$('msg').textContent='Escreve a ação primeiro.';$('texto').focus();return;}
+  if(await run({acao:'criar',texto:t})){$('texto').value='';S.filter='abertas';render();$('texto').focus();}
+});
+$('texto').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))$('add').requestSubmit();});
+$('reload').onclick=()=>run();
+run();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.editing===null)run();});
+</script>
+</body>
+</html>

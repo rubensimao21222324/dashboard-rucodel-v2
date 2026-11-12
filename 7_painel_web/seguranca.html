@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0b0d12">
+<title>Jarvis · Segurança</title>
+<style>
+:root{--bg:#0b0d12;--panel:#141821;--panel2:#1b2030;--line:#ffffff14;--ink:#eef0f4;--muted:#9aa1ad;--gold:#ddbd80;--red:#ff6b6e;--orange:#f5a524;--green:#27c48a;--blue:#4da3ff;--font:'Segoe UI',Inter,Roboto,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px var(--font)}
+button,input{font:inherit;color:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:22px;font-weight:600;margin-right:auto}h1 span{color:var(--gold)}
+main{max-width:980px;margin:0 auto;padding:18px 20px 40px;display:grid;gap:16px}
+.chip{height:38px;padding:0 14px;border-radius:999px;border:1px solid #ffffff22;background:var(--panel2);font-weight:600;font-size:14px}
+.verdict{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:var(--panel)}
+.verdict b{font-size:20px}.verdict .big{font-size:34px}
+.verdict.ok{border-color:#27c48a55}.verdict.ok b{color:var(--green)}
+.verdict.warn{border-color:#f5a52455}.verdict.warn b{color:var(--orange)}
+.verdict.bad{border-color:#ff6b6e66}.verdict.bad b{color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+h2{margin:0 0 10px;font-size:15px;color:var(--gold);font-weight:600;letter-spacing:.02em}
+.warns{display:grid;gap:8px}
+.w{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--panel2);border-left:4px solid var(--muted);line-height:1.4}
+.w.vermelho{border-color:var(--red)}.w.laranja{border-color:var(--orange)}.w.info{border-color:var(--blue)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.row:last-child{border-bottom:none}.row span:first-child{color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.dot.ok{background:var(--green)}.dot.no{background:var(--red)}
+.big-num{font-size:30px;font-weight:700}.sub{color:var(--muted);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px 4px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:500}
+.form{display:grid;gap:10px;max-width:420px}
+.form input{height:46px;border-radius:12px;border:1px solid #ffffff22;background:#0a0e16;padding:0 14px;font-size:18px;letter-spacing:.2em}
+.form input:focus{outline:2px solid var(--gold);border-color:transparent}
+.gold{height:46px;padding:0 22px;border-radius:12px;border:1px solid var(--gold);background:var(--gold);color:#1e1d18;font-weight:700}
+.ghost{height:42px;padding:0 16px;border-radius:12px;border:1px solid #ffffff22;background:var(--panel2);font-weight:600}
+.msg{font-size:14px;min-height:20px}.msg.err{color:var(--red)}.msg.ok{color:var(--green)}
+.empty{color:var(--muted);padding:14px;text-align:center}
+@media(max-width:560px){header,main{padding-left:14px;padding-right:14px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Segurança do <span>Jarvis</span></h1>
+  <button class="chip" id="reload" type="button" aria-label="Atualizar">↻</button>
+</header>
+<main>
+  <div class="verdict" id="verdict"><span class="big">⏳</span><div><b>A verificar…</b></div></div>
+
+  <section class="card"><h2>Avisos</h2><div class="warns" id="warns"></div></section>
+
+  <div class="grid">
+    <section class="card"><h2>Cópias de segurança</h2><div id="copias"></div>
+      <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="ghost" id="copy-now" type="button">Fazer cópia agora</button><span class="msg" id="copy-msg"></span></div>
+    </section>
+    <section class="card"><h2>Serviços</h2><div id="servicos"></div></section>
+    <section class="card"><h2>Quem pode entrar</h2><div id="acesso"></div></section>
+  </div>
+
+  <section class="card"><h2>Tentativas falhadas</h2><div id="tentativas"></div></section>
+
+  <section class="card"><h2>Senha do encarregado</h2>
+    <p class="sub" id="boss-info" style="margin-top:0">Dá acesso a todos os setores nos tablets. Ao mudar, os tablets com a sessão de encarregado aberta pedem a senha nova.</p>
+    <form class="form" id="boss">
+      <input id="b-atual" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Senha atual" aria-label="Senha atual">
+      <input id="b-nova" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Nova (6 a 8 algarismos)" aria-label="Senha nova">
+      <input id="b-rep" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Repetir a nova" aria-label="Repetir a senha nova">
+      <button class="gold" type="submit">Mudar senha</button>
+      <div class="msg" id="b-msg"></div>
+    </form>
+  </section>
+  <p class="sub" id="foot"></p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const el=(t,c='',x='')=>{const e=document.createElement(t);if(c)e.className=c;if(x!=='')e.textContent=x;return e;};
+const dmy=s=>s?s.slice(8,10)+'/'+s.slice(5,7)+' '+s.slice(11,16):'—';
+async function call(path,body){
+  const r=await fetch(path,body===undefined?{credentials:'same-origin'}:{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw Error(d.error?.message||d.error||(r.status===401?'Abre primeiro o painel do Jarvis e depois esta página.':'O pedido falhou.'));
+  return d;
+}
+function row(box,label,value,ok){const r=el('div','row');const v=el('span');if(ok!==undefined)v.append(el('i','dot '+(ok?'ok':'no')));v.append(value);r.append(el('span','',label),v);box.append(r);}
+function render(d){
+  const red=d.avisos.filter(a=>a.nivel==='vermelho').length,orange=d.avisos.filter(a=>a.nivel==='laranja').length;
+  const v=$('verdict');v.className='verdict '+(red?'bad':orange?'warn':'ok');v.replaceChildren();
+  const t=el('div');t.append(el('b','',red?red+' problema'+(red>1?'s':'')+' a resolver':orange?orange+' aviso'+(orange>1?'s':''):'Tudo em ordem'),el('div','sub','Verificado às '+d.gerado.slice(11,16)));
+  v.append(el('span','big',red?'🚨':orange?'⚠️':'🛡️'),t);
+  const w=$('warns');w.replaceChildren();
+  if(!d.avisos.length)w.append(el('div','empty','Sem avisos.'));
+  d.avisos.forEach(a=>w.append(el('div','w '+a.nivel,a.texto)));
+  const c=$('copias');c.replaceChildren();const cp=d.copias;
+  row(c,'Última cópia válida',cp.ultima_valida?dmy(cp.ultima_valida)+(cp.ficheiros?' · '+cp.ficheiros+' ficheiros':''):'ainda não testada',cp.teste==='ok');
+  row(c,'No PC',cp.pc_total+' cópia'+(cp.pc_total!==1?'s':'')+(cp.pc[0]?' · última '+cp.pc[0].mb+' MB':''),cp.pc_total>0);
+  const ex=cp.externo;row(c,'Disco externo'+(ex.pasta?' ('+ex.pasta.slice(0,2)+')':''),!ex.pasta?'não configurado':!ex.ligado?'desligado':ex.total+' cópia'+(ex.total!==1?'s':'')+(ex.lista[0]?' · última '+dmy(ex.lista[0].quando):''),!!(ex.pasta&&ex.ligado&&ex.total));
+  const s=$('servicos');s.replaceChildren();d.servicos.forEach(x=>row(s,x.nome,x.ok?'a funcionar':'em baixo',x.ok));
+  const a=$('acesso');a.replaceChildren();
+  row(a,'Internet (direto)','fechado',true);row(a,'Telemóvel / fora',d.acesso.remoto,true);row(a,'Tablets',d.acesso.tablets,true);
+  const tt=$('tentativas');tt.replaceChildren();
+  const head=el('div');head.style.cssText='display:flex;gap:28px;margin-bottom:10px';
+  [['Últimas 24 h',d.tentativas['24h']],['Últimos 7 dias',d.tentativas['7dias']]].forEach(([l,n])=>{const b=el('div');b.append(el('div','big-num',String(n)),el('div','sub',l));head.append(b);});tt.append(head);
+  if(!d.tentativas.lista.length)tt.append(el('div','empty','Nenhuma tentativa falhada. 👍'));
+  else{const tb=el('table');const h=el('tr');['Quando','O quê','Onde'].forEach(x=>h.append(el('th','',x)));tb.append(h);
+    d.tentativas.lista.forEach(e=>{const r=el('tr');[dmy(e.quando),e.o_que,e.onde||'—'].forEach(x=>r.append(el('td','',x)));tb.append(r);});tt.append(tb);}
+  const bi=d.encarregado;$('boss-info').textContent='Dá acesso a todos os setores nos tablets. '+(bi.antiga?'⚠ Ainda é a senha antiga — muda-a.':bi.mudada?'Mudada em '+dmy(bi.mudada)+'.':!bi.definida?'Ainda não está definida (deixa a senha atual em branco).':'')+' Ao mudar, os tablets com sessão de encarregado pedem a senha nova.';
+  $('foot').textContent='Os PINs e senhas nunca aparecem aqui nem nos registos: só a hora, o sítio e o tipo de tentativa.';
+}
+async function load(){try{render(await call('/seguranca/estado'));}catch(e){$('verdict').className='verdict bad';$('verdict').replaceChildren(el('span','big','⚠️'),el('b','',e.message));}}
+$('reload').onclick=load;
+$('copy-now').onclick=async()=>{const m=$('copy-msg');m.className='msg';m.textContent='A pedir…';try{await call('/seguranca/copia_agora',{});m.className='msg ok';m.textContent='Pedida. Fica pronta e testada em 1 a 2 minutos.';setTimeout(load,120000);}catch(e){m.className='msg err';m.textContent=e.message;}};
+$('boss').onsubmit=async ev=>{ev.preventDefault();const m=$('b-msg');m.className='msg err';
+  if($('b-nova').value!==$('b-rep').value){m.textContent='A senha nova e a repetição não são iguais.';return;}
+  try{await call('/seguranca/encarregado',{atual:$('b-atual').value,nova:$('b-nova').value});m.className='msg ok';m.textContent='Senha mudada.';['b-atual','b-nova','b-rep'].forEach(i=>$(i).value='');load();}catch(e){m.textContent=e.message;}};
+load();setInterval(()=>{if(!document.hidden)load();},60000);
+</script>
+</body>
+</html>

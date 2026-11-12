@@ -1,0 +1,70 @@
+[
+ {
+  "id": "dano",
+  "texto": "Nível de dano (1 = quase nada · 5 = muito estragada)",
+  "obrigatoria": true,
+  "opcoes": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "empeno",
+  "texto": "Empeno",
+  "opcoes": [
+   "Não",
+   "Pouco",
+   "Muito"
+  ]
+ },
+ {
+  "id": "fissura",
+  "texto": "Partida / fissura (soldar)",
+  "opcoes": [
+   "Não",
+   "Sim"
+  ]
+ },
+ {
+  "id": "rebarbas",
+  "texto": "Rebarbas (torno)",
+  "opcoes": [
+   "Não",
+   "Sim"
+  ]
+ },
+ {
+  "id": "lavar",
+  "texto": "Precisa lavar",
+  "opcoes": [
+   "Não",
+   "Sim"
+  ]
+ },
+ {
+  "id": "pintura",
+  "texto": "Pintura",
+  "opcoes": [
+   "Não precisa",
+   "Retoque",
+   "Pintar tudo",
+   "Decapar"
+  ]
+ },
+ {
+  "id": "decisao",
+  "texto": "Próximo passo",
+  "obrigatoria": true,
+  "opcoes": [
+   "Torno (rebarbas)",
+   "Lavar",
+   "Soldar",
+   "Desempenar",
+   "Pintar direto",
+   "Orçamento / não reparável"
+  ]
+ }
+]

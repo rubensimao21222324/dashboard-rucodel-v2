@@ -1,0 +1,9 @@
+{
+  "token": "SERA_GERADO_AUTOMATICAMENTE",
+  "voice": "pt-PT-DuarteNeural",
+  "rate": "-5%",
+  "pitch": "-2Hz",
+  "ollama": "http://127.0.0.1:11434",
+  "model": "qwen3.5:9b-q4_K_M",
+  "reasoning_profile": "balanced"
+}

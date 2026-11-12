@@ -1,0 +1,3 @@
+Dashboard Rucodel 2.0 - linha de desenvolvimento (DEV)
+Base: cópia do Jarvis_Central_Pro de produção em 2026-11-04 (inclui Info Jantes e Segurança 1).
+Única alteração ao código: central.py lê as portas de JARVIS_PORT / JARVIS_REMOTE_PORT (por omissão, as de produção).

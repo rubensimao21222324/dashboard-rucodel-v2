@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090b10">
+  <title>Jarvis · O teu universo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='23' fill='%23090b10' stroke='%23dfbc78' stroke-width='3'/%3E%3Cellipse cx='32' cy='32' rx='31' ry='11' fill='none' stroke='%23dfbc78' transform='rotate(-35 32 32)'/%3E%3C/svg%3E">
+  <script>/* Tema claro/escuro: aplica antes de desenhar a página para não piscar */
+  (function(){var t='dark';try{t=localStorage.getItem('rucodel-tema')||'dark';}catch(e){}document.documentElement.dataset.theme=t;})();
+  </script>
+  <link rel="stylesheet" href="/style.css?v=13.0">
+  <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js"}}</script>
+</head>
+<body class="layout-c">
+  <svg class="icon-defs" aria-hidden="true"><defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m5 12 14-7-5 14-2-6-7-1Zm7 1 7-8"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-muted" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0m-7 7v3m-4 0h8"/></symbol>
+    <symbol id="i-memory" viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-5 3 4 4 0 0 0-1 7 4 4 0 0 0 6 5l3 2V3L9 4Zm6 0a3 3 0 0 1 5 3 4 4 0 0 1 1 7 4 4 0 0 1-6 5l-3 2M5 8l4 2m-4 5 4-2m10-5-4 2m4 5-4-2"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5h7l2 3h9v11H3V7Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m10 3-1 3-3 1-3 3v4l3 1 1 3 3 3h4l1-3 3-1 3-3v-4l-3-1-1-3-3-3h-4Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 12h8m-8 4h6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 16 12-12 4 4L8 20H4v-4Zm9-9 4 4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="13" rx="2"/><path d="M8 21h8m-4-5v5M6 7h5m3 0h4M6 11h12"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h2m2.5-4v8M11 5v14m3.5-10v6M18 10v4m3-2h0"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4V8Z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="m4 16 12-12 4 4L8 20H4v-4Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></symbol>
+  </defs></svg>
+
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Jarvis, início"><span class="brand-face"><img src="/assets/jarvis-rosto.png?v=1" alt=""></span><span><strong>J A R V I S</strong><small>O TEU UNIVERSO PESSOAL</small></span></a>
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-item active" id="nav-home">Visão geral</button>
+        <button class="nav-item" data-panel="memory">Memória</button>
+        <button class="nav-item" data-panel="documents">Documentos</button>
+      </nav>
+      <div class="top-actions"><a class="icon-button screens-launch" href="/screens" target="_blank" rel="noopener" aria-label="Os meus ecrãs" title="Os meus ecrãs"><svg><use href="#i-monitor"/></svg></a><span class="connection-pill" id="connection"><i></i><span>A ligar</span></span><button class="mode-toggle" id="mode-toggle" type="button" role="switch" aria-checked="false" title="Modo LEITURA: vês os dados reais, mas nada é alterado no software de produção. Clica para ESCRITA."><span class="m-opt m-read"><svg><use href="#i-lock"/></svg>Leitura</span><span class="m-opt m-write"><svg><use href="#i-pen"/></svg>Escrita</span></button><button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Modo claro" title="Mudar para modo claro"><span class="knob"></span><svg class="t-moon"><use href="#i-moon"/></svg><svg class="t-sun"><use href="#i-sun"/></svg></button><button class="icon-button" id="refresh" aria-label="Atualizar dados" title="Atualizar dados"><svg><use href="#i-refresh"/></svg></button><button class="icon-button" data-panel="settings" aria-label="Definições" title="Definições"><svg><use href="#i-settings"/></svg></button><button class="icon-button fullscreen" id="fullscreen" aria-label="Ecrã inteiro" title="Ecrã inteiro"><svg><use href="#i-expand"/></svg></button><span class="profile-mark" title="Simão Rafael">SR</span></div>
+    </header>
+    <div class="write-banner" id="write-banner" hidden><svg><use href="#i-pen"/></svg><b>MODO ESCRITA</b> — os botões + / − / Iniciar / Terminar mexem no software de produção REAL.<button type="button" id="write-banner-off">Voltar a Leitura</button></div>
+    <section class="day-strip" aria-label="Calendário">
+      <div class="ds-month"><button class="icon-button small previous" id="previous-month" type="button" aria-label="Mês anterior" title="Mês anterior"><svg><use href="#i-chevron"/></svg></button><button class="ds-title" id="calendar-title" type="button" title="Voltar a hoje"></button><button class="icon-button small" id="next-month" type="button" aria-label="Mês seguinte" title="Mês seguinte"><svg><use href="#i-chevron"/></svg></button></div>
+      <div class="ds-days" id="calendar" role="group" aria-label="Dias"></div>
+    </section>
+
+    <main class="lc-grid">
+      <nav class="lc-hub" aria-label="Ecrãs da produção">
+        <a class="hub-tile primary" href="/producao/ecra" target="_blank" rel="noopener"><i>📺</i><span>Ecrã de produção<small>Abrir no ecrã grande</small></span><svg><use href="#i-arrow"/></svg></a>
+        <a class="hub-tile" href="/setores" target="_blank" rel="noopener"><i>🛠️</i><span>Ecrã dos setores<small>Torno · Pó · Pintura · CNC</small></span><svg><use href="#i-arrow"/></svg></a>
+        <a class="hub-tile" href="/avaliacoes" target="_blank" rel="noopener"><i>📋</i><span>Avaliações das jantes<small>Dano · próximo passo · ADS</small></span><svg><use href="#i-arrow"/></svg></a>
+        <a class="hub-tile" href="/fluxo" target="_blank" rel="noopener"><i>🔀</i><span>Fluxo de produção<small>Fases das jantes · modo teste</small></span><svg><use href="#i-arrow"/></svg></a>
+      </nav>
+      <aside class="lc-left" aria-label="Produção">
+        <a class="lc-alert" id="prod-alert" href="/producao/ecra?alertas=1" target="_blank" rel="noopener" hidden></a>
+        <section class="panel production-panel" id="production-panel" aria-live="polite"><div class="panel-heading"><h2 id="production-title">Produção</h2><button class="icon-button small" id="production-refresh" aria-label="Atualizar a contagem agora" title="Atualizar agora (cerca de 1 minuto)"><svg><use href="#i-refresh"/></svg></button></div><div id="production-body"><div class="empty-small">A carregar a contagem…</div></div></section>
+        <nav class="lc-launches" aria-label="Atalhos da produção">
+          <button class="lc-launch small" type="button" id="pdf-button"><i>📄</i><span>Pedir lista em PDF<small>Serviço do dia, por zona</small></span></button>
+        </nav>
+      </aside>
+      <div class="lc-center">
+        <section class="panel lc-zones" aria-label="Produção por zona" aria-live="polite"><div class="panel-heading"><h2>Por zona</h2><span class="lc-next" id="zones-next"></span></div><div id="zones-body"><div class="empty-small">A carregar…</div></div></section>
+        <section class="panel lc-tasks" aria-label="Tarefas importantes"><div class="panel-heading"><h2>Tarefas importantes</h2><span class="lc-task-count" id="focus-count"></span></div><form class="lc-task-add" id="task-add"><input id="task-title" type="text" maxlength="500" placeholder="Não posso esquecer de…" aria-label="Nova tarefa importante" autocomplete="off"><button class="gold-button" type="submit" aria-label="Adicionar tarefa"><svg><use href="#i-plus"/></svg></button></form><div id="task-preview" class="lc-task-list"><div class="empty-small">A carregar…</div></div></section>
+      </div>
+      <aside class="lc-right" aria-label="Calendário e notas">
+        <a class="lc-launch lc-acoes" href="/acoes" target="_blank" rel="noopener"><i>🔧</i><span>Ações a corrigir<small id="acoes-count">Escrever o que é preciso corrigir</small></span><svg><use href="#i-arrow"/></svg></a>
+        <a class="lc-launch lc-acoes" href="/seguranca" target="_blank" rel="noopener"><i id="seg-icon">🛡️</i><span>Segurança<small id="seg-count">Cópias, acessos e avisos</small></span><svg><use href="#i-arrow"/></svg></a>
+        <section class="panel notes-panel" id="notes-panel"><div class="panel-heading"><h2>Notas da produção</h2><span class="notes-count" id="notes-count"></span></div><div id="notes-body"><div class="empty-small">A carregar…</div></div></section>
+      </aside>
+      <section class="lc-chat" id="chat-panel" aria-label="Conversa com o Jarvis">
+        <div class="lc-pop" id="chat-pop" hidden>
+          <header class="chat-heading"><div class="chat-identity"><span class="mini-core"></span><div><h2>Jarvis</h2><p id="chat-state">A ligar</p></div></div><div><button class="icon-button" id="history-button" aria-label="Conversas guardadas" title="Conversas guardadas"><svg><use href="#i-clock"/></svg></button><button class="icon-button" id="new-chat" aria-label="Nova conversa" title="Nova conversa"><svg><use href="#i-plus"/></svg></button><button class="icon-button" id="chat-close" type="button" aria-label="Fechar conversa" title="Fechar"><svg><use href="#i-close"/></svg></button></div></header>
+          <div class="messages" id="messages" role="log" aria-live="polite"></div>
+          <div class="thinking" id="thinking" hidden><span></span><span></span><span></span>O Jarvis está a pensar…</div>
+        </div>
+        <form class="composer lc-bar" id="composer"><img class="lc-face" src="/assets/jarvis-rosto.png?v=1" alt=""><label for="message" class="sr-only">Mensagem para o Jarvis</label><textarea id="message" placeholder="Pergunta ao Jarvis…" rows="1" maxlength="12000"></textarea><div class="lc-tools"><button type="button" class="icon-button" data-panel="documents" aria-label="Os teus documentos" title="Os teus documentos"><svg><use href="#i-plus"/></svg></button><button type="button" class="icon-button" id="microphone" aria-label="Ditar uma mensagem" title="Ditado do navegador; pode usar internet"><svg><use href="#i-mic"/></svg></button><button type="button" class="icon-button" id="handsfree" aria-pressed="false" aria-label="Ligar mãos-livres: diz «Jarvis»" title="Mãos-livres: diz «Jarvis» e o teu pedido (reconhecido no teu PC)"><svg><use href="#i-wave"/></svg></button><button type="button" class="icon-button" id="sound" aria-label="Desativar voz automática" aria-pressed="true" title="Voz automática ligada"><svg><use href="#i-sound"/></svg></button><button type="button" class="icon-button stop-voice" id="stop-voice" aria-label="Parar leitura" title="Parar leitura" hidden><svg><use href="#i-stop"/></svg></button></div><button class="send-button" id="send" aria-label="Enviar mensagem"><svg><use href="#i-send"/></svg></button></form>
+      </section>
+      <div class="lc-legacy" hidden>
+        <section class="greeting"><div class="eyebrow"><span class="tiny-spark">✦</span> O TEU ESPAÇO</div><h1 id="greeting">Bom dia, Simão<span>.</span></h1><p id="today-label"></p></section>
+        <div id="memory-preview"></div>
+        <footer class="chat-footer"><span id="voice-label">Voz automática · Duarte</span><span class="keyboard-hint">↵ enviar</span></footer>
+      </div>
+      <section class="universe" aria-label="Mapa das tuas memórias">
+        <div class="universe-heading"><div><div class="eyebrow">TUDO O QUE IMPORTA, LIGADO</div><h2>O teu universo<span>, em ordem.</span></h2></div><div class="view-switch" aria-label="Vista central"><button id="mode-core" class="selected" aria-pressed="true">Núcleo</button><button id="mode-avatar" aria-pressed="false">Personagem</button></div></div>
+        <div class="universe-stage" id="stage"><div class="stage-grid" aria-hidden="true"></div><canvas id="cosmos" aria-hidden="true"></canvas><div id="avatar" class="avatar-host" hidden aria-label="Personagem masculina 3D do Jarvis"></div><div id="avatar-loading" class="avatar-loading" hidden role="status">A preparar a personagem…</div><div id="persona" class="persona" hidden><canvas id="persona-canvas" aria-label="Jarvis"></canvas></div><div id="orbit-nodes" class="orbit-nodes"></div><div class="core-name" id="core-name"><span>J A R V I S</span><small>O TEU CENTRO DE GRAVIDADE</small></div><div class="stage-corner top-left">MEMÓRIA PESSOAL<span id="node-count">A SINCRONIZAR</span></div><div class="stage-corner bottom-right"><span class="compass">N</span>RUCODEL / PT</div></div>
+        <div class="universe-status"><div class="pulse-bars" id="pulse" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><strong id="activity">À tua disposição.</strong><span id="activity-detail">A ligar à tua Central local</span></div><span class="live-indicator" id="live-indicator"></span></div>
+        <div class="universe-metrics"><button data-panel="memory"><svg><use href="#i-memory"/></svg><span><strong id="memory-total">—</strong><small>memórias</small></span><svg class="metric-arrow"><use href="#i-chevron"/></svg></button><button data-panel="tasks"><svg><use href="#i-check"/></svg><span><strong id="task-total">—</strong><small>por fazer</small></span><svg class="metric-arrow"><use href="#i-chevron"/></svg></button><button data-panel="documents"><svg><use href="#i-folder"/></svg><span><strong id="document-total">—</strong><small>documentos</small></span><svg class="metric-arrow"><use href="#i-chevron"/></svg></button></div>
+        <div class="sync-line"><span id="sync-label">Os teus dados ficam nesta Central.</span><time id="clock"></time></div>
+      </section>
+
+    </main>
+
+    <footer class="bottom-bar"><span><i></i><span id="model-label">INTELIGÊNCIA LOCAL</span></span><p>Feito para o teu dia. Ao teu ritmo.</p><span>SIMÃO RAFAEL <b>/</b> RUCODEL</span></footer>
+  </div>
+  <dialog id="notes-alert" class="notes-alert" aria-labelledby="notes-alert-title"><div class="eyebrow">LEMBRETE · NOTAS DA PRODUÇÃO</div><h2 id="notes-alert-title">Tens notas por tratar</h2><div id="notes-alert-body"></div><div class="notes-alert-actions"><a class="subtle-button" href="/producao/ecra" target="_blank" rel="noopener">Abrir notas</a><button class="gold-button" id="notes-alert-ok">Visto</button></div></dialog>
+  <dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><header class="drawer-heading"><div><div class="eyebrow">O TEU UNIVERSO</div><h2 id="drawer-title"></h2></div><button id="drawer-close" class="icon-button" aria-label="Fechar painel"><svg><use href="#i-close"/></svg></button></header><div id="drawer-body"></div></dialog>
+  <dialog id="write-confirm" class="notes-alert write-confirm" aria-labelledby="write-confirm-title"><div class="eyebrow">SOFTWARE DE PRODUÇÃO REAL</div><h2 id="write-confirm-title">Ligar o modo ESCRITA?</h2><p>Com a escrita ligada, os botões <b>+ / −</b>, <b>Iniciar</b> e <b>Terminar</b> dos ecrãs alteram os dados verdadeiros da oficina, tal como no dashboard da produção.</p><p class="write-note">Volta sozinho a LEITURA sempre que a app é reiniciada.</p><div class="notes-alert-actions"><button class="subtle-button" id="write-cancel" type="button">Ficar em Leitura</button><button class="danger-button" id="write-ok" type="button">Ligar Escrita</button></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script>/* Leitura / Escrita no software de produção. Quem decide é a Central (o bloqueio está no servidor); o botão só mostra e pede a mudança. */
+  (function(){var b=document.getElementById('mode-toggle'),banner=document.getElementById('write-banner'),dlg=document.getElementById('write-confirm');
+  function show(m){var w=m==='escrita';document.documentElement.dataset.modo=w?'escrita':'leitura';b.setAttribute('aria-checked',w?'true':'false');banner.hidden=!w;
+    b.title=w?'Modo ESCRITA: as ações mexem no software de produção real. Clica para voltar a LEITURA.':'Modo LEITURA: vês os dados reais, mas nada é alterado no software de produção. Clica para ESCRITA.';}
+  function aviso(t){var x=document.getElementById('toast');if(!x)return;x.textContent=t;x.classList.remove('error');x.hidden=false;clearTimeout(aviso.t);aviso.t=setTimeout(function(){x.hidden=true;},3500);}
+  async function pedir(m){try{var r=await fetch('/modo',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({modo:m})});var d=await r.json();if(!r.ok)throw Error((d.error&&d.error.message)||d.error||'Falhou');show(d.modo);aviso(d.modo==='escrita'?'Modo ESCRITA ligado.':'Modo LEITURA: nada é alterado no software de produção.');}catch(e){aviso('Não consegui mudar o modo: '+e.message);ler();}}
+  async function ler(){try{var r=await fetch('/modo',{credentials:'same-origin',cache:'no-store'});if(r.ok)show((await r.json()).modo);}catch(e){}}
+  b.addEventListener('click',function(){if(document.documentElement.dataset.modo==='escrita')pedir('leitura');else dlg.showModal();});
+  document.getElementById('write-ok').addEventListener('click',function(){dlg.close();pedir('escrita');});
+  document.getElementById('write-cancel').addEventListener('click',function(){dlg.close();});
+  document.getElementById('write-banner-off').addEventListener('click',function(){pedir('leitura');});
+  show('leitura');ler();setInterval(function(){if(!document.hidden)ler();},20000);document.addEventListener('visibilitychange',function(){if(!document.hidden)ler();});})();
+  </script>
+  <script>/* Botão de tema: um clique troca entre claro e escuro e fica guardado neste navegador */
+  (function(){var b=document.getElementById('theme-toggle'),m=document.querySelector('meta[name=theme-color]');
+  function show(t){var light=t==='light';b.setAttribute('aria-checked',light?'true':'false');b.title=light?'Mudar para modo escuro':'Mudar para modo claro';if(m)m.content=light?'#f4f2ed':'#090b10';}
+  show(document.documentElement.dataset.theme);
+  b.addEventListener('click',function(){var r=document.documentElement,t=r.dataset.theme==='light'?'dark':'light';r.classList.add('theme-anim');r.dataset.theme=t;show(t);try{localStorage.setItem('rucodel-tema',t);}catch(e){}setTimeout(function(){r.classList.remove('theme-anim');},400);});})();
+  </script>
+  <script type="module" src="/app.js?v=15.0"></script>
+</body>
+</html>

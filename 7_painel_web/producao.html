@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis · Produção</title>
+<style>
+:root{--bg:#0a0c11;--card:#12151d;--line:#ffffff12;--ink:#ecebe6;--muted:#8d93a0;--gold:#ddbd80;--s1:#f5a524;--s2:#2fd39a;--maq:#5cc8ff;--pin:#ff8a5c}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1b2433 0,var(--bg) 55%);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+main{max-width:1500px;margin:0 auto;padding:28px 28px 40px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:26px}
+.eyebrow{color:var(--gold);letter-spacing:3px;font-size:12px;font-weight:600}
+h1{margin:6px 0 0;font-size:40px;font-weight:450;letter-spacing:-1px}
+h1 small{display:block;font-size:18px;color:var(--muted);font-weight:400;letter-spacing:0;margin-top:6px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tabs{display:flex;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:4px}
+.tabs button{border:0;background:none;color:var(--muted);padding:10px 18px;border-radius:24px;font-size:15px;cursor:pointer}
+.tabs button.on{background:#ddbd8022;color:var(--gold)}
+.tabs button.late{color:#ff9d7a}.tabs button.late.on{background:#ff7a5a26;color:#ffb39a}
+.btn{border:1px solid #ddbd8055;background:none;color:var(--gold);padding:11px 18px;border-radius:12px;font-size:15px;cursor:pointer;text-decoration:none}
+.btn:disabled{opacity:.5;cursor:wait}
+.hero{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+.box .label{font-size:14px;color:var(--muted);letter-spacing:.5px}
+.box .num{font-size:56px;font-weight:350;line-height:1.05;margin-top:6px}
+.box.total .num{font-size:84px;color:#fff}
+.box.maq .num{color:var(--maq)}.box.pin .num{color:var(--pin)}.box.out .num{color:#b9bcc6}
+.sectors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
+.sector{border-radius:18px;padding:20px 24px;border:1px solid}
+.sector.s1{background:#f5a52412;border-color:#f5a52455}.sector.s2{background:#2fd39a12;border-color:#2fd39a55}
+.sector .label{font-size:16px;font-weight:600;letter-spacing:.5px}
+.sector.s1 .label,.sector.s1 .num{color:var(--s1)}.sector.s2 .label,.sector.s2 .num{color:var(--s2)}
+.sector .hint{font-size:14px;color:var(--muted);margin-top:2px}
+.sector .num{font-size:64px;font-weight:400;line-height:1.05;margin-top:8px}
+.sector .num span{font-size:20px;color:var(--muted);margin-left:8px}
+.bar{height:14px;border-radius:8px;background:#ffffff10;overflow:hidden;margin:6px 0 30px;display:flex}
+.bar i{display:block;height:100%}.bar i.a{background:var(--s1)}.bar i.g{background:var(--s2)}
+.bar-caption{display:flex;justify-content:space-between;color:var(--muted);font-size:14px}
+h2{font-size:22px;font-weight:500;margin:10px 0 14px}
+.zones{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.zone{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.zone-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.zone-name{font-size:20px;font-weight:550}
+.zone-total{font-size:32px;font-weight:400;white-space:nowrap}
+.zone-total small{font-size:14px;color:var(--muted);margin-left:4px}
+.zone-mix{color:var(--muted);font-size:14px;margin:4px 0 14px}
+.zone-mix b{font-weight:600}.zone-mix .m{color:var(--maq)}.zone-mix .p{color:var(--pin)}
+.zone-sectors{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.zs{border-radius:12px;padding:10px 12px;border:1px solid}
+.zs.s1{background:#f5a52414;border-color:#f5a52450}.zs.s2{background:#2fd39a14;border-color:#2fd39a50}
+.zs .t{font-size:12px;font-weight:700;letter-spacing:1px}
+.zs.s1 .t,.zs.s1 .v{color:var(--s1)}.zs.s2 .t,.zs.s2 .v{color:var(--s2)}
+.zs .v{font-size:38px;line-height:1.1;font-weight:450}
+.zs .v small{font-size:13px;color:var(--muted);margin-left:4px}
+.zone .bar{height:8px;margin:12px 0 0}
+.empty{color:var(--muted);font-size:18px;padding:40px 0}
+.foot{color:#6c7380;font-size:13px;margin-top:26px}
+.zs,.sector{cursor:pointer;transition:transform .15s,box-shadow .15s}.zs:hover,.sector:hover{transform:translateY(-2px);box-shadow:0 6px 24px #0007}
+.zs .go,.sector .go{font-size:12px;color:var(--muted);margin-top:4px}
+dialog{background:#10131a;color:var(--ink);border:1px solid #ffffff22;border-radius:20px;padding:0;width:min(1000px,94vw);max-height:88vh}
+dialog::backdrop{background:#000a;backdrop-filter:blur(6px)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#10131a;z-index:1}
+.dlg-head h3{margin:0;font-size:22px;font-weight:500}.dlg-head h3 small{display:block;font-size:14px;color:var(--muted);margin-top:4px}
+.dlg-head .tag{font-size:12px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:8px;margin-right:8px}
+.tag.s0{color:var(--gold);background:#ddbd8018;border:1px solid #ddbd8055}
+.teach{padding:18px 22px}.teach h4{margin:18px 0 8px;font-size:13px;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.teach .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}.teach .thumbs img,.teach .thumbs .noimg{width:64px;height:64px;border-radius:10px;object-fit:cover}
+.teach .who{color:var(--muted);font-size:14px}
+.ops{display:flex;flex-wrap:wrap;gap:8px}.ops button{border:1px solid #ffffff22;background:#ffffff08;color:var(--ink,#eee);border-radius:12px;padding:12px 14px;font-size:15px;cursor:pointer}
+.ops button.on{background:#ddbd8030;border-color:var(--gold);color:var(--gold)}.ops button .n{display:inline-block;min-width:20px;font-weight:700}
+.seq{display:flex;flex-direction:column;gap:8px}.seq .step{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#ffffff06;border:1px solid #ffffff14;border-radius:12px;padding:8px 10px}
+.seq .step b{min-width:150px}.seq .mins{display:flex;gap:6px;flex-wrap:wrap}.seq .mins button{border:1px solid #ffffff22;background:none;color:var(--muted);border-radius:9px;padding:7px 10px;font-size:14px;cursor:pointer}
+.seq .mins button.on{background:var(--gold);color:#1d1c16;border-color:var(--gold);font-weight:700}.seq .x{margin-left:auto;background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer}
+.teach .addop{display:flex;gap:8px;margin-top:10px}.teach input,.teach textarea{background:#0e1117;border:1px solid #ffffff22;color:inherit;border-radius:10px;padding:10px 12px;font:inherit;font-size:15px}
+.teach input{flex:1}.teach textarea{width:100%;min-height:70px;margin-top:6px}.teach .total{color:var(--gold);font-weight:600}
+.tchip{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:8px;font-size:12px;background:#ddbd8022;color:var(--gold)}
+.zfilter{display:flex;flex-wrap:wrap;gap:8px;padding:14px 22px 6px;position:sticky;top:0;background:#10131a;z-index:1}.zfilter button{border:1px solid #ffffff22;background:#ffffff08;color:inherit;border-radius:20px;padding:9px 14px;font-size:14px;cursor:pointer}.zfilter button b{margin-left:7px;font-weight:700;color:var(--gold)}.zfilter button.on{background:#ddbd8030;border-color:var(--gold);color:var(--gold)}
+.tag.s1{color:var(--s1);background:#f5a52418;border:1px solid #f5a52455}.tag.s2{color:var(--s2);background:#2fd39a18;border:1px solid #2fd39a55}
+.close{border:0;background:#ffffff10;color:var(--ink);width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer}
+.items{padding:8px 22px 22px}
+.item{display:grid;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.item img,.item .noimg{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#ffffff08}
+.item .client{font-weight:600}.item .sub{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.item .qt{font-size:20px}.item .qt small{font-size:13px;color:var(--muted)}
+.item .state{font-size:13px;color:var(--muted)}
+.group{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;margin-top:4px}
+.group.Maquinada{color:var(--maq);background:#5cc8ff18}.group.Pintada{color:var(--pin);background:#ff8a5c18}.group.Outro{color:#b9bcc6;background:#ffffff10}
+.item{grid-template-columns:34px 64px 1.4fr .7fr 1.2fr 1.2fr .8fr}
+.item input[type=checkbox]{width:24px;height:24px;accent-color:var(--gold);cursor:pointer}
+.item.sel{background:#ddbd8010;border-radius:12px}
+.tyre-badge{display:inline-flex;gap:6px;align-items:baseline;margin-top:8px;padding:5px 12px;border-radius:10px;background:#c084fc1c;border:1px solid #c084fc66;color:#e1c2ff;font-size:15px}
+.tyre-badge b{font-size:22px;color:#f0deff}
+.group-title{margin:18px 0 4px;padding:6px 0;border-bottom:2px solid #ddbd8040;color:var(--gold);font-size:15px;font-weight:600;letter-spacing:.3px}
+.selbar{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;background:#171b24;border-top:1px solid #ddbd8044}
+.selbar .btn{background:var(--gold);color:#1d1c16;border-color:var(--gold);font-weight:600}
+textarea{width:100%;min-height:120px;background:#0b0e14;color:#ffd54a;border:1px solid #ddbd8044;border-radius:12px;padding:12px;font:16px system-ui;resize:vertical}
+.note-form{padding:18px 22px}.note-form .chosen{color:var(--muted);font-size:14px;margin:10px 0 14px}
+.note{border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0;background:#ffffff04}
+.note.done{opacity:.55}.note.done .note-text{text-decoration:line-through}
+.note-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.note-text{font-size:18px;white-space:pre-wrap;overflow-wrap:anywhere;color:#ffd54a;font-weight:500}
+.note-meta{font-size:13px;color:var(--muted);margin-top:4px}
+.note-actions{display:flex;gap:8px;flex:none}.note-actions button{border:1px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:14px}
+.note .item{grid-template-columns:56px 1.4fr .7fr 1.2fr 1.2fr;font-size:14px}.note .item img,.note .item .noimg{width:56px;height:56px}
+@media(max-width:700px){.item,.note .item{grid-template-columns:30px 56px 1fr 1fr;font-size:14px}.item img,.item .noimg{width:56px;height:56px}.item .hide-sm{display:none}}
+.alerts{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin:0 0 14px;padding:14px 18px;border-radius:16px;border:1px solid #ff5d6c88;background:linear-gradient(90deg,#ff5d6c26,#ff5d6c0d);color:#ffd6da;font-family:inherit;font-weight:600;font-size:17px;cursor:pointer}
+.alerts.orange{border-color:#f5a52488;background:linear-gradient(90deg,#f5a52426,#f5a5240d);color:#ffe2b0}
+.alerts b{font-size:30px;line-height:1}.alerts small{display:block;font-weight:400;font-size:13px;opacity:.85;margin-top:2px}.alerts .go{margin-left:auto;font-size:14px;opacity:.8}
+.tag.sa{color:#ff8a95;background:#ff5d6c18;border:1px solid #ff5d6c55}
+.warn{color:#e9b26b;font-size:14px;margin:-4px 0 16px}
+@media(max-width:1000px){.hero{grid-template-columns:1fr 1fr}.box.total{grid-column:1/-1}}
+@media(max-width:600px){main{padding:18px 14px}h1{font-size:30px}.box .num{font-size:42px}.box.total .num{font-size:64px}.sector .num{font-size:46px}.zones{grid-template-columns:1fr}}
+.search{display:flex;gap:10px;align-items:center;margin:-8px 0 22px}
+.search input{flex:1;max-width:520px;height:52px;border-radius:14px;border:1px solid #ddbd8055;background:var(--card);color:var(--ink,#eef0f4);font-size:20px;padding:0 18px}
+.search input::placeholder{color:var(--muted)}
+.search .btn{height:52px}
+.results h2{margin:4px 0 6px}
+.results .rhead{color:var(--muted);font-size:14px;margin:0 0 6px}
+.item.srow{grid-template-columns:64px 1.5fr .6fr 1.2fr 1fr 1fr}
+.stag{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:7px;margin-top:4px}
+.stag.s1{background:#f5a52422;color:#f5a524}.stag.s2{background:#27c48a22;color:#27c48a}
+@media (max-width:720px){.item.srow{grid-template-columns:56px 1fr .5fr}.item.srow .hide-sm{display:none}}
+
+/* ⓘ Detalhes da Dashboard em cada serviço */
+.info-btn{display:inline-grid;place-items:center;width:30px;height:30px;margin-left:8px;border-radius:50%;border:2px solid #4da3ff;background:transparent;color:#4da3ff;font:italic 700 17px Georgia,serif;cursor:pointer;vertical-align:middle;padding:0}
+.info-btn.on{background:#4da3ff;color:#0b1220}
+.info-box{margin:-4px 0 10px 0;padding:12px 16px;border-left:4px solid #4da3ff;background:rgba(77,163,255,.12);border-radius:8px;font-size:18px;line-height:1.4;color:inherit;white-space:pre-wrap}
+.info-box b{color:#4da3ff}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div><div class="eyebrow">JARVIS · PRODUÇÃO</div><h1 id="title">Produção<small id="subtitle">A carregar…</small></h1></div>
+  <div class="actions">
+    <div class="tabs" id="tabs"></div>
+    <a class="btn" href="/fluxo">🧩 Fluxo</a>
+    <button class="btn" id="teach-btn">🎓 Ensinar</button>
+    <button class="btn" id="notes-btn">📝 Notas</button>
+    <button class="btn" id="refresh">↻ Atualizar agora</button>
+    <a class="btn" href="/">Voltar ao Jarvis</a>
+  </div>
+</header>
+<button class="alerts" id="alerts" type="button" hidden></button>
+<div class="search"><input id="search" type="text" inputmode="numeric" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="🔎 Nº de cliente"><button class="btn" id="search-mode" type="button">ABC</button><button class="btn" id="search-clear" hidden>✕ Limpar</button></div>
+<div class="results" id="results" hidden></div>
+<div id="content"></div>
+<div class="foot" id="foot"></div>
+<dialog id="dlg"><div class="dlg-head"><h3 id="dlg-title"></h3><button class="close" id="dlg-close" aria-label="Fechar">✕</button></div><div class="items" id="dlg-items"></div></dialog>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let data=null,index=0,picked=false;
+// «Para trás» (prazo já passado e ainda não terminado) vem primeiro; os dias a seguir.
+const views=()=>(data&&data.atras?[data.atras]:[]).concat((data&&data.dias)||[]);
+// «Todos»: junta Para trás + todos os dias carregados numa só vista (soma por zona; as listas juntam-se).
+function allView(){
+  const V=views(),N=['servicos','maquinadas','pintadas','outros','total','setor1','setor2','sem_info'],all={dia:'',todos:true,rotulo:'Para trás + '+((data&&data.dias)||[]).map(d=>(dayWord(d.dia)||d.rotulo.split(',')[0]).toLowerCase()).join(' + '),zonas:[]},byZone={};
+  N.forEach(k=>{if(V.some(d=>d[k]!==undefined))all[k]=V.reduce((a,d)=>a+(d[k]||0),0);});
+  V.forEach(d=>d.zonas.forEach(z=>{const key=z.zona||z.nome;let t=byZone[key];
+    if(!t){t=byZone[key]={zona:z.zona,nome:z.nome};N.forEach(k=>{if(z[k]!==undefined)t[k]=0;});all.zonas.push(t);}
+    N.forEach(k=>{if(z[k]!==undefined)t[k]=(t[k]||0)+z[k];});
+    if(z.lista)t.lista=(t.lista||[]).concat(z.lista.map(i=>({...i,prazo:i.prazo||d.dia})));}));
+  return all;
+}
+function lateDays(iso){if(!iso)return 0;const t=new Date();return Math.round((new Date(t.getFullYear(),t.getMonth(),t.getDate(),12)-new Date(iso+'T12:00:00'))/864e5);}
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+function dayWord(iso){const t=new Date();const d=new Date(iso+'T12:00:00');const diff=Math.round((d-new Date(t.getFullYear(),t.getMonth(),t.getDate(),12))/864e5);return diff===0?'Hoje':diff===1?'Amanhã':'';}
+function bar(s1,s2){const b=el('div','bar');const total=s1+s2||1;const a=el('i','a'),g=el('i','g');a.style.width=(s1*100/total)+'%';g.style.width=(s2*100/total)+'%';b.append(a,g);return b;}
+function render(){
+  const c=$('content');c.replaceChildren();$('tabs').replaceChildren();
+  if(!data.configurado){c.append(el('div','empty','O acesso ao programa de gestão ainda não está configurado (CONFIGURAR_GESTAO.cmd).'));return;}
+  if(!data.dias){c.append(el('div','empty','Ainda não há contagem. Carrega em «Atualizar agora».'));return;}
+  const V=views();if(!picked){index=data.atras?1:0;picked=true;}if(index>V.length)index=0;
+  V.forEach((d,i)=>{const b=el('button',(i===index?'on':'')+(d.atras?' late':''),d.atras?'⚠ Para trás · '+d.total:(dayWord(d.dia)||d.rotulo.split(',')[0])+' · '+d.dia.slice(8,10)+'/'+d.dia.slice(5,7));b.onclick=()=>{index=i;render();};$('tabs').append(b);});
+  {const b=el('button',index===V.length?'on':'','☰ Todos · '+V.reduce((a,d)=>a+(d.total||0),0));b.onclick=()=>{index=V.length;render();};$('tabs').append(b);}
+  const d=index===V.length?allView():V[index];const word=d.todos?'Tudo':d.atras?'Para trás':dayWord(d.dia);
+  $('title').firstChild.textContent='Produção'+(word?' · '+word:'');$('subtitle').textContent=d.rotulo;
+  const hero=el('div','hero');
+  [['total','Total de jantes (maquinadas + pintadas)',d.total],['maq','Maquinadas',d.maquinadas],['pin','Pintadas',d.pintadas],['out','Outros trabalhos',d.outros]].forEach(([k,l,v])=>{const b=el('div','box '+k);b.append(el('div','label',l),el('div','num',String(v)));hero.append(b);});
+  c.append(hero);
+  if(d.setor1!==undefined){
+    const sec=el('div','sectors');
+    [['s1','SETOR 1 · ANTES DO TORNO','Ainda não passaram o torno',d.setor1,1],['s2','SETOR 2 · DEPOIS DO TORNO','Já passaram o torno (pintura)',d.setor2,2]].forEach(([k,l,h,v,num])=>{const b=el('div','sector '+k);const n=el('div','num',String(v));n.append(el('span','','jantes'));b.append(el('div','label',l),el('div','hint',h),n);b.append(el('div','go','Ver lista de todas as zonas ›'));if(!d.zonas.some(z=>z.lista))b.onclick=noList;else{b.onclick=()=>openList('Todas as zonas',d.rotulo,num,d.zonas.flatMap(z=>(z.lista||[]).filter(i=>i.setor===num).map(i=>({...i,cliente:i.cliente,zona:z.nome,estado:z.nome+' · '+i.estado}))),d.dia);}sec.append(b);});
+    c.append(sec);
+    const total=d.setor1+d.setor2;const cap=el('div','bar-caption');cap.append(el('span','',total?Math.round(d.setor1*100/total)+'% antes do torno':''),el('span','',total?Math.round(d.setor2*100/total)+'% depois do torno':''));c.append(cap,bar(d.setor1,d.setor2));
+    if(d.sem_info){const w=el('div','warn','Sem informação do torno: '+d.sem_info+' jantes · ver lista ›');w.style.cursor='pointer';w.onclick=()=>d.zonas.some(z=>z.lista)?openList('Todas as zonas',d.rotulo,'x',d.zonas.flatMap(z=>(z.lista||[]).filter(i=>i.setor==null).map(i=>({...i,zona:z.nome,estado:z.nome+' · '+i.estado}))),d.dia):noList();c.append(w);}
+  }
+  c.append(el('h2','','Por zona'));
+  if(!d.zonas.length){c.append(el('div','empty',d.todos?'Não há serviços.':d.atras?'Nada atrasado. Tudo em dia.':'Nenhum serviço com prazo neste dia.'));}
+  const grid=el('div','zones');
+  [...d.zonas].sort((a,b)=>b.total+b.outros-(a.total+a.outros)).forEach(z=>{
+    const card=el('div','zone');const head=el('div','zone-head');const t=el('div','zone-total',String(z.total));t.append(el('small','','jantes'));head.append(el('div','zone-name',z.nome),t);card.append(head);
+    const mix=el('div','zone-mix');mix.innerHTML='';[['m','maquinadas',z.maquinadas],['p','pintadas',z.pintadas]].forEach(([k,l,v],i)=>{if(i)mix.append(' · ');const b=el('b',k,String(v));mix.append(b,' '+l);});if(z.outros)mix.append(' · '+z.outros+' outros');mix.append(' · '+z.servicos+' serviços');card.append(mix);
+    if(z.setor1!==undefined){const zs=el('div','zone-sectors');[['s1','ANTES DO TORNO',z.setor1,1],['s2','DEPOIS DO TORNO',z.setor2,2]].forEach(([k,l,v,num])=>{const b=el('div','zs '+k);const n=el('div','v',String(v));n.append(el('small','','jantes'));b.append(el('div','t',l),n);b.append(el('div','go','Ver lista ›'));b.onclick=()=>z.lista?openList(z.nome,d.rotulo,num,z.lista.filter(i=>i.setor===num),d.dia):noList();zs.append(b);});card.append(zs,bar(z.setor1,z.setor2));if(z.sem_info){const w=el('div','warn','Sem informação: '+z.sem_info+' · ver ›');w.style.cursor='pointer';w.onclick=()=>z.lista?openList(z.nome,d.rotulo,'x',z.lista.filter(i=>i.setor==null),d.dia):noList();card.append(w);}}
+    grid.append(card);
+  });
+  c.append(grid);
+  $('foot').textContent='Contado em '+data.gerado.slice(8,10)+'/'+data.gerado.slice(5,7)+' às '+data.gerado.slice(11,16)+' · atualiza sozinho todos os dias às '+data.hora+'.';
+}
+function noList(){const t=$('dlg-title');t.replaceChildren('Lista ainda não disponível');const box=$('dlg-items');box.replaceChildren(el('div','empty','Esta contagem foi feita antes de o Jarvis guardar as listas. Carrega em «↻ Atualizar agora» (cerca de 1 minuto) e volta a carregar na caixa.'));$('dlg').showModal();}
+const WEEKDAYS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+function deliveryDay(iso){const d=new Date(iso+'T12:00:00');return WEEKDAYS[d.getDay()]+', dia '+d.getDate();}
+// List order: machined with tyre, machined, painted with tyre, painted, other work (same client together inside each group).
+const fold=t=>(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const hasTyre=i=>fold(i.tipo).includes('pneu');
+function rank(i){const t=fold(i.tipo);if(hasTyre(i)&&t.includes('maquinad'))return 0;if(i.grupo==='Maquinada')return 1;if(hasTyre(i)&&t.includes('pintad'))return 2;if(i.grupo==='Pintada')return 3;return 4;}
+const RANK_NAMES=['Maquinadas com pneu','Maquinadas','Pintadas com pneu','Pintadas','Outros trabalhos'];
+function openList(title,sub,sectorNumber,items,dayIso,opts={}){
+  // Filtro por zona: as listas com várias zonas mostram botões por zona no topo (Todas · ADS · 13 Aveiro …).
+  const allItems=opts.all||items;const zoneSel=opts.zona||'';
+  items=[...(zoneSel?allItems.filter(i=>(i.zona||'Sem zona')===zoneSel):allItems)].sort((a,b)=>rank(a)-rank(b)||fold(a.cliente).localeCompare(fold(b.cliente)));
+  lastList=[title,sub,sectorNumber,allItems,dayIso,{zona:zoneSel}];
+  const t=$('dlg-title');t.replaceChildren();const tag=el('span','tag s'+sectorNumber,sectorNumber===1?'ANTES DO TORNO':sectorNumber===2?'DEPOIS DO TORNO':sectorNumber==='x'?'SEM INFORMAÇÃO DO TORNO':sectorNumber==='a'?'🚨 ALERTAS':'TODAS');t.append(tag,title);
+  const total=items.reduce((a,i)=>a+i.quantidade,0);const tyres=items.filter(hasTyre).reduce((a,i)=>a+i.quantidade,0);
+  t.append(el('small','',sub+' · '+items.length+' serviços · '+total+' jantes'));
+  if(tyres){const badge=el('div','tyre-badge');badge.append(el('b','',String(tyres)),' jante'+(tyres>1?'s':'')+' com pneu');t.append(badge);}
+  const box=$('dlg-items');box.replaceChildren();
+  const zoneCount={};allItems.forEach(i=>{const z=i.zona||'Sem zona';zoneCount[z]=(zoneCount[z]||0)+(i.quantidade||1);});
+  if(Object.keys(zoneCount).length>1){const zb=el('div','zfilter');const mk=(z,label,n)=>{const b=el('button',zoneSel===z?'on':'',label);b.type='button';b.append(el('b','',String(n)));b.onclick=()=>openList(title,sub,sectorNumber,allItems,dayIso,{zona:z});zb.append(b);};
+    mk('','Todas',allItems.reduce((a,i)=>a+(i.quantidade||1),0));Object.entries(zoneCount).sort((a,b)=>b[1]-a[1]).forEach(([z,n])=>mk(z,z,n));box.append(zb);}
+  if(!items.length)box.append(el('div','empty','Nenhum serviço neste setor.'));
+  const chosen=new Set();const bar=el('div','selbar');const info=el('span','','');const make=el('button','btn','Criar nota');const teachB=el('button','btn','🎓 Ensinar');bar.hidden=true;const btns=el('span','');btns.style.cssText='display:flex;gap:8px';btns.append(teachB,make);bar.append(info,btns);
+  const update=()=>{bar.hidden=!chosen.size;info.textContent=chosen.size+' selecionada'+(chosen.size>1?'s':'');make.textContent='Criar nota…';teachB.textContent='🎓 Ensinar '+chosen.size+' serviço'+(chosen.size>1?'s':'');};
+  teachB.onclick=()=>teachForm([...chosen].map(i=>({...i,zona:i.zona||title,setor:i.setor||(sectorNumber==='x'||sectorNumber==='a'?0:sectorNumber)})));
+  make.onclick=()=>newNote([...chosen].map(i=>({...i,zona:i.zona||title,setor:sectorNumber==='x'||sectorNumber==='a'?0:sectorNumber,entrega:deliveryDay(i.prazo||dayIso)})));
+  let lastRank=-1;
+  items.forEach(i=>{
+    if(rank(i)!==lastRank){lastRank=rank(i);const same=items.filter(x=>rank(x)===lastRank);box.append(el('div','group-title',RANK_NAMES[lastRank]+' · '+same.length+' serviço'+(same.length>1?'s':'')+' · '+same.reduce((a,x)=>a+x.quantidade,0)+' jantes'));}
+    const row=el('div','item');const check=el('input');check.type='checkbox';check.setAttribute('aria-label','Selecionar');
+    check.onchange=()=>{check.checked?chosen.add(i):chosen.delete(i);row.classList.toggle('sel',check.checked);update();};row.append(check);
+    if(i.imagem){const img=el('img');img.loading='lazy';img.alt='';img.src='/producao/foto?p='+encodeURIComponent(i.imagem);img.onerror=()=>img.replaceWith(el('div','noimg'));row.append(img);}else row.append(el('div','noimg'));
+    const c=el('div','client',i.cliente);const taught=teach.ensinadas[String(i.id)];if(taught){const ch=el('span','tchip','🎓 '+taught.operacoes.map(o=>o.op).join(' → '));ch.title='Já ensinada · toca para corrigir';ch.style.cursor='pointer';ch.onclick=e=>{e.stopPropagation();teachForm([{...i,zona:i.zona||title,setor:i.setor||sectorNumber}]);};c.append(ch);}c.append(el('span','sub','Entrada '+i.entrada+' · entrega '+deliveryDay(i.prazo||dayIso)+(!dayIso&&lateDays(i.prazo)>0?' · '+lateDays(i.prazo)+(lateDays(i.prazo)===1?' dia':' dias')+' de atraso':'')));row.append(c);
+    if(i.detalhes){const ib=el('button','info-btn','i');ib.type='button';ib.title='Detalhes da Dashboard';ib.setAttribute('aria-label','Ver detalhes');const nm=c.firstChild;c.insertBefore(ib,nm.nextSibling);ib.onclick=e=>{e.stopPropagation();const nx=row.nextSibling;if(nx&&nx.classList&&nx.classList.contains('info-box')){nx.remove();ib.classList.remove('on');return;}const bx=el('div','info-box');bx.append(el('b','','Detalhes: '),document.createTextNode(i.detalhes));row.after(bx);ib.classList.add('on');};}
+    const q=el('div','qt',String(i.quantidade));q.append(el('small',' ',i.tamanho?' × '+i.tamanho+'"':' jantes'));row.append(q);
+    const k=el('div','hide-sm',i.tipo||'—');k.append(el('br'),el('span','group '+i.grupo,i.grupo==='Outro'?'Outro trabalho':i.grupo));row.append(k);
+    row.append(el('div','',i.cor||'—'));row.append(el('div','state hide-sm',i.estado));
+    box.append(row);
+  });
+  box.append(bar);
+  $('dlg').showModal();
+}
+function wheelRow(i,withCheck){
+  const row=el('div','item');
+  if(i.imagem){const img=el('img');img.loading='lazy';img.alt='';img.src='/producao/foto?p='+encodeURIComponent(i.imagem);img.onerror=()=>img.replaceWith(el('div','noimg'));row.append(img);}else row.append(el('div','noimg'));
+  const c=el('div','client',i.cliente||'—');c.append(el('span','sub',[i.zona,i.entrega?'entrega '+i.entrega:'',i.setor===1?'antes do torno':i.setor===2?'depois do torno':''].filter(Boolean).join(' · ')));row.append(c);
+  const q=el('div','qt',String(i.quantidade||''));q.append(el('small','',i.tamanho?' × '+i.tamanho+'"':' jantes'));row.append(q);
+  row.append(el('div','hide-sm',i.tipo||'—'));row.append(el('div','',i.cor||'—'));return row;
+}
+async function notesApi(body){const r=await fetch('/producao/notas',body?{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{credentials:'same-origin'});const j=await r.json();if(!r.ok)throw Error(j.error?.message||j.error||'Falhou.');return j.notas;}
+function newNote(wheels){
+  const t=$('dlg-title');t.replaceChildren('Nova nota');t.append(el('small','',wheels.length+' jante'+(wheels.length>1?'s':'')+' selecionada'+(wheels.length>1?'s':'')));
+  const box=$('dlg-items');box.replaceChildren();const form=el('div','note-form');const area=el('textarea');area.placeholder='Escreve a nota… (por exemplo: confirmar cor com o cliente, prioridade amanhã de manhã)';
+  const list=el('div','chosen',wheels.map(w=>w.cliente+' ('+w.quantidade+(w.tamanho?' × '+w.tamanho+'"':'')+(w.cor?', '+w.cor:'')+')').join(' · '));
+  const save=el('button','btn','Guardar nota');save.style.background='var(--gold)';save.style.color='#1d1c16';
+  const msg=el('div','warn','');
+  save.onclick=async()=>{save.disabled=true;try{await notesApi({acao:'criar',texto:area.value,jantes:wheels});showNotes('Nota guardada.');}catch(e){msg.textContent=e.message;save.disabled=false;}};
+  form.append(area,list,save,msg);box.append(form);if(!$('dlg').open)$('dlg').showModal();setTimeout(()=>area.focus(),50);
+}
+async function showNotes(flash){
+  const t=$('dlg-title');t.replaceChildren('Notas da produção');const box=$('dlg-items');box.replaceChildren(el('div','empty','A carregar…'));if(!$('dlg').open)$('dlg').showModal();
+  let notes;try{notes=await notesApi();}catch(e){box.replaceChildren(el('div','empty',e.message));return;}
+  t.append(el('small','',(flash?flash+' · ':'')+notes.filter(n=>!n.feita).length+' por tratar · '+notes.length+' no total'));box.replaceChildren();
+  if(!notes.length)box.append(el('div','empty','Ainda não há notas. Abre uma lista, marca as jantes e carrega em «Criar nota».'));
+  notes.forEach(n=>{
+    const card=el('div','note'+(n.feita?' done':''));const head=el('div','note-head');const left=el('div');left.append(el('div','note-text',n.texto),el('div','note-meta',n.criada.slice(8,10)+'/'+n.criada.slice(5,7)+' às '+n.criada.slice(11,16)+' · '+n.jantes.length+' jante'+(n.jantes.length!==1?'s':'')));
+    const actions=el('div','note-actions');const done=el('button','',n.feita?'↺ Reabrir':'✓ Feita');done.onclick=async()=>{await notesApi({acao:'feita',id:n.id,feita:!n.feita});showNotes();};
+    const del=el('button','','Apagar');del.onclick=async()=>{if(del.dataset.sure){await notesApi({acao:'apagar',id:n.id});showNotes();}else{del.dataset.sure='1';del.textContent='Confirmar?';}};
+    actions.append(done,del);head.append(left,actions);card.append(head);n.jantes.forEach(w=>card.append(wheelRow(w)));box.append(card);
+  });
+}
+$('notes-btn').onclick=()=>showNotes();
+// ── Modo ensinar: o percurso (por ordem) e o tempo de cada operação, jante a jante. Base para o Jarvis aprender.
+let teach={operacoes:[],ensinadas:{},total:0},lastList=null;
+async function teachApi(body){const r=await fetch('/producao/ensino',body?{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{credentials:'same-origin'});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error?.message||j.error||(r.status===404?'Reinicia a Central para ativar o modo ensinar.':'Falhou.'));teach=j;return j;}
+async function loadTeach(){try{await teachApi();}catch{}}
+const MINS=[5,10,15,30,45,60,90,120,180];
+function teachForm(wheels){
+  const t=$('dlg-title');t.replaceChildren('🎓 Ensinar');t.append(el('small','',wheels.length+' serviço'+(wheels.length>1?'s':'')+' · '+wheels.reduce((a,w)=>a+(w.quantidade||0),0)+' jantes · só mão de obra direta, pela ordem · tempos por jante'));
+  const box=$('dlg-items');box.replaceChildren();const f=el('div','teach');
+  const thumbs=el('div','thumbs');wheels.slice(0,12).forEach(w=>{if(w.imagem){const im=el('img');im.alt='';im.src='/producao/foto?p='+encodeURIComponent(w.imagem);im.onerror=()=>im.replaceWith(el('div','noimg'));thumbs.append(im);}else thumbs.append(el('div','noimg'));});
+  f.append(thumbs,el('div','who',wheels.map(w=>w.cliente+' ('+w.quantidade+(w.tamanho?' × '+w.tamanho+'"':'')+(w.cor?', '+w.cor:'')+(w.tipo?', '+w.tipo:'')+')').join(' · ')));
+  const prev=wheels.length===1&&teach.ensinadas[String(wheels[0].id)];
+  let seq=prev?prev.operacoes.map(o=>({...o})):[];
+  const ops=el('div','ops'),list=el('div','seq'),total=el('div','total'),msg=el('div','warn','');
+  const draw=()=>{ops.replaceChildren();teach.operacoes.forEach(name=>{const at=seq.findIndex(x=>x.op===name);const b=el('button',at>=0?'on':'');if(at>=0)b.append(el('span','n',(at+1)+'.'));b.append(name);b.type='button';
+      b.onclick=()=>{if(at>=0)seq.splice(at,1);else seq.push({op:name,min:30});draw();};ops.append(b);});
+    list.replaceChildren();seq.forEach((x,k)=>{const row=el('div','step');row.append(el('b','',(k+1)+'. '+x.op));const m=el('div','mins');
+      MINS.forEach(v=>{const mb=el('button',x.min===v?'on':'',v<60?v+' min':v%60?Math.floor(v/60)+'h'+(v%60):(v/60)+' h');mb.type='button';mb.onclick=()=>{x.min=v;draw();};m.append(mb);});
+      const del=el('button','x','×');del.type='button';del.title='Tirar';del.onclick=()=>{seq.splice(k,1);draw();};row.append(m,del);list.append(row);});
+    const sum=seq.reduce((a,x)=>a+x.min,0),hm=m=>m>=60?Math.floor(m/60)+' h'+(m%60?' '+m%60+' min':''):m+' min',qt=wheels.length===1?(wheels[0].quantidade||1):0;total.textContent=seq.length?'Por jante: '+hm(sum)+(qt>1?' · este serviço ('+qt+' jantes): '+hm(sum*qt):''):'Ainda nenhuma operação escolhida.';};
+  const addRow=el('div','addop');const inp=el('input');inp.placeholder='Falta uma operação? Escreve aqui (ex.: Verniz)';inp.maxLength=60;const add=el('button','btn','+ Nova operação');add.type='button';
+  add.onclick=async()=>{const name=inp.value.trim();if(!name)return;add.disabled=true;try{await teachApi({acao:'operacao',nome:name});const real=teach.operacoes.find(o=>o.toLowerCase()===name.toLowerCase());if(real&&!seq.some(x=>x.op===real))seq.push({op:real,min:30});inp.value='';draw();}catch(e){msg.textContent=e.message;}finally{add.disabled=false;}};
+  addRow.append(inp,add);
+  const note=el('textarea');note.placeholder='O que viste (opcional): ex. fissura de 5 cm no aro interior, empeno lateral…';if(prev&&prev.nota)note.value=prev.nota;
+  const save=el('button','btn','Guardar');save.style.cssText='background:var(--gold);color:#1d1c16;font-weight:700;margin-top:14px';
+  save.onclick=async()=>{if(!seq.length){msg.textContent='Escolhe pelo menos uma operação.';return;}save.disabled=true;
+    try{await teachApi({acao:'guardar',operacoes:seq,nota:note.value,jantes:wheels});if(lastList)openList(...lastList);else showTeachHome('Guardado.');}catch(e){msg.textContent=e.message;save.disabled=false;}};
+  f.append(el('h4','','OPERAÇÕES (PELA ORDEM)'),ops,addRow,el('h4','','TEMPO DE MÃO DE OBRA DE CADA UMA (POR JANTE)'),list,total,el('h4','','NOTA'),note,save,msg);box.append(f);draw();if(!$('dlg').open)$('dlg').showModal();
+}
+function showTeachHome(flash){
+  lastList=null;const t=$('dlg-title');t.replaceChildren('🎓 Modo ensinar');t.append(el('small','',(flash?flash+' · ':'')+teach.total+(teach.total===1?' serviço ensinado':' serviços ensinados')+' · o Jarvis começa a sugerir a partir de uns 200–300'));
+  const box=$('dlg-items');box.replaceChildren();const f=el('div','teach');
+  f.append(el('p','who','Escolhe uma lista, seleciona as jantes e carrega em «🎓 Ensinar». Diz as operações pela ordem em que são feitas e o tempo de cada uma. As que já ensinaste ficam marcadas com 🎓 (toca nelas para corrigir).'));
+  const go=el('div','ops');views().forEach(d=>{const items=d.zonas.flatMap(z=>(z.lista||[]).map(i=>({...i,zona:z.nome})));const missing=items.filter(i=>!teach.ensinadas[String(i.id)]).length;
+    const b=el('button','',(d.atras?'⚠ Para trás':(dayWord(d.dia)||d.rotulo.split(',')[0]))+' · faltam '+missing+' de '+items.length);b.type='button';
+    b.onclick=()=>openList(d.atras?'Para trás':'Todas as zonas',d.rotulo,0,items.sort((a,b2)=>(teach.ensinadas[String(a.id)]?1:0)-(teach.ensinadas[String(b2.id)]?1:0)),d.atras?null:d.dia);go.append(b);});
+  f.append(el('h4','','COMEÇAR POR'),go,el('h4','','OPERAÇÕES CONHECIDAS'),el('div','who',teach.operacoes.join(' · ')));box.append(f);if(!$('dlg').open)$('dlg').showModal();}
+$('teach-btn').onclick=async()=>{await loadTeach();if(!data||!data.dias){alert('Ainda não há contagem.');return;}showTeachHome();};
+loadTeach();
+$('dlg-close').onclick=()=>$('dlg').close();$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close();});
+// Search: every service of the days on this screen (today and the next working day), by client number or name.
+function searchRows(q){const out=[];const f=fold(q).trim();if(!f)return out;const num=/^\d+$/.test(f);
+  views().forEach(d=>(d.zonas||[]).forEach(z=>(z.lista||[]).forEach(i=>{const c=fold(i.cliente);const n=c.split(' · ')[0].trim();
+    if(num?(n===f||n.startsWith(f)):c.includes(f))out.push({...i,zona:z.nome,dia:d.dia,exact:num&&n===f});})));
+  if(num&&out.some(i=>i.exact))return out.filter(i=>i.exact);return out;}
+function renderSearch(){const q=$('search').value;const box=$('results');$('search-clear').hidden=!q;
+  if(!q.trim()){box.hidden=true;$('content').hidden=false;return;}
+  $('content').hidden=true;box.hidden=false;box.replaceChildren();
+  if(!data||!data.dias){box.append(el('div','empty','Ainda não há contagem.'));return;}
+  const rows=searchRows(q);const total=rows.reduce((a,i)=>a+(i.quantidade||0),0);
+  box.append(el('h2','','Pesquisa: '+q.trim()),el('div','rhead',rows.length?rows.length+' serviço'+(rows.length>1?'s':'')+' · '+total+(total===1?' jante':' jantes')+' · '+views().map(d=>d.atras?'para trás':d.rotulo.split(',')[0]).join(', '):'Nenhum serviço para trás nem com entrega '+data.dias.map(d=>(dayWord(d.dia)||d.rotulo).toLowerCase()).join(' ou ')+' para esta pesquisa.'));
+  views().forEach(d=>{const mine=rows.filter(i=>i.dia===d.dia).sort((a,b)=>rank(a)-rank(b));if(!mine.length)return;
+    box.append(el('div','group-title',(dayWord(d.dia)||'')+' · '+d.rotulo+' · '+(n=>n+(n===1?' jante':' jantes'))(mine.reduce((a,i)=>a+i.quantidade,0))));
+    mine.forEach(i=>{const row=el('div','item srow');
+      if(i.imagem){const img=el('img');img.loading='lazy';img.alt='';img.src='/producao/foto?p='+encodeURIComponent(i.imagem);img.onerror=()=>img.replaceWith(el('div','noimg'));row.append(img);}else row.append(el('div','noimg'));
+      const c=el('div','client',i.cliente);c.append(el('span','sub',(i.zona||'')+' · entrada '+(i.entrada||'')+' · entrega '+deliveryDay(i.prazo||d.dia)));
+      if(i.setor===1||i.setor===2)c.append(el('span','stag s'+i.setor,i.setor===1?'ANTES DO TORNO':'DEPOIS DO TORNO'));row.append(c);
+      const qt=el('div','qt',String(i.quantidade));qt.append(el('small','',i.tamanho?' × '+i.tamanho+'"':' jantes'));row.append(qt);
+      const k=el('div','hide-sm',i.tipo||'—');k.append(el('br'),el('span','group '+i.grupo,i.grupo==='Outro'?'Outro trabalho':i.grupo));row.append(k);
+      row.append(el('div','hide-sm',i.cor||'—'),el('div','state hide-sm',i.estado||''));box.append(row);});});}
+$('search').oninput=renderSearch;
+// Numbers first (numeric keyboard); «ABC» switches to letters to search by name, «123» back.
+$('search-mode').onclick=()=>{const i=$('search'),letters=i.inputMode==='numeric';i.inputMode=letters?'text':'numeric';i.placeholder=letters?'🔎 Nome do cliente':'🔎 Nº de cliente';
+  $('search-mode').textContent=letters?'123':'ABC';i.blur();setTimeout(()=>i.focus(),60);};
+$('search').onkeydown=e=>{if(e.key==='Enter')e.target.blur();};$('search-clear').onclick=()=>{$('search').value='';renderSearch();$('search').focus();};
+// Regra do Simão: sem nada marcado no «Gerir Tarefas» (ou sem leitura) = ainda antes do torno (setor 1).
+function sem2setor1(v){if(!v)return;if(v.sem_info){v.setor1=(v.setor1||0)+v.sem_info;v.sem_info=0;}(v.zonas||[]).forEach(z=>{if(z.sem_info){z.setor1=(z.setor1||0)+z.sem_info;z.sem_info=0;}(z.lista||[]).forEach(i=>{if(i.setor==null)i.setor=1;});});}
+function normalise(){if(data){sem2setor1(data.atras);(data.dias||[]).forEach(sem2setor1);}}
+// 🚨 Alertas: jantes que já deviam ter passado o torno (prazo passado / hoje; amanhã depois das 15:00 e 16:00).
+let alertData=null;
+async function loadAlerts(){try{const r=await fetch('/producao/alertas',{credentials:'same-origin'});if(!r.ok)return;alertData=await r.json();}catch{return;}
+  const b=$('alerts'),red=alertData.vermelho||[],orange=alertData.laranja||[],all=red.concat(orange);if(!all.length){b.hidden=true;return;}
+  const j=all.reduce((a,e)=>a+(e.quantidade||1),0);b.hidden=false;b.className='alerts'+(red.length?'':' orange');b.replaceChildren();
+  const t=el('span','',(red.length?'Jantes demasiado atrasadas':'Jantes de hoje em risco'));t.append(el('small','',(red.length?red.length+' serviço'+(red.length>1?'s':'')+' a vermelho':'')+(red.length&&orange.length?' · ':'')+(orange.length?orange.length+' a laranja':'')+' · ainda não passaram o torno'));
+  b.append(el('b','','🚨 '+j),t,el('span','go','Ver lista ›'));
+  b.onclick=()=>openList('Ainda não passaram o torno','Atualizado às '+alertData.gerado.slice(11,16),'a',all.map(e=>({...e,estado:e.zona+' · '+e.motivo})),null);
+  if(location.search.includes('alertas')&&!loadAlerts.opened){loadAlerts.opened=true;b.click();}}
+async function load(){loadAlerts();try{const r=await fetch('/producao',{credentials:'same-origin'});data=await r.json();if(!r.ok)throw Error(data.error||'Sem acesso.');normalise();render();renderSearch();}catch(e){$('content').replaceChildren(el('div','empty','Não consegui carregar a contagem: '+e.message));}}
+$('refresh').onclick=async()=>{const b=$('refresh');b.disabled=true;b.textContent='A contar… (cerca de 1 minuto)';try{const r=await fetch('/producao/atualizar',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:'{}'});const j=await r.json();if(!r.ok)throw Error(j.error?.message||'Falhou.');data=j;normalise();render();}catch(e){$('foot').textContent='Não foi possível atualizar: '+e.message;}finally{b.disabled=false;b.textContent='↻ Atualizar agora';}};
+load();setInterval(()=>{if(!document.hidden)load();},5*60*1000);
+</script>
+</body>
+</html>

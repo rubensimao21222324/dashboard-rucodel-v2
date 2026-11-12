@@ -1,0 +1,41 @@
+PESQUISA E DECISAO — 30/10/2026
+
+Base escolhida: Open WebUI 0.12.5, pacote oficial instalado do PyPI.
+https://github.com/open-webui/open-webui/releases/tag/v0.12.5
+https://docs.openwebui.com/getting-started/quick-start/
+https://docs.openwebui.com/reference/env-configuration/
+
+Voz online: biblioteca edge-tts (projeto independente que utiliza o servico Edge).
+https://github.com/rany2/edge-tts
+Vozes portuguesas: Duarte e Raquel, pt-PT.
+https://learn.microsoft.com/pt-br/azure/ai-services/speech-service/language-support
+
+Inteligencia local: Ollama ja existente; pedidos atraves da API documentada.
+https://docs.ollama.com/api/chat
+
+Alternativas verificadas:
+Leon: https://github.com/leon-ai/leon
+O README avisa que a versao 2.0 esta em Developer Preview e que a documentacao
+antiga nao descreve completamente essa versao. Nao foi escolhido para este pacote.
+Open-LLM-VTuber: https://github.com/Open-LLM-VTuber/Open-LLM-VTuber
+Continua util para o avatar e conversa por voz; a Central nao o desinstala.
+https://docs.llmvtuber.com/en/docs/user-guide/backend/tts/
+Jarvis Windows: https://github.com/ndunl075/Jarvis
+Projeto mais pequeno com mais componentes e configuracao; nao foi instalado.
+
+Tutorial adicional encontrado para exploracao:
+https://www.youtube.com/watch?v=z9RaSZIXBBc
+Nao foi possivel reproduzir o video neste ambiente. A implementacao baseia-se
+na documentacao oficial, nao em afirmar ter visto esse tutorial.
+
+Reel indicado pelo utilizador:
+https://www.instagram.com/reel/DfGKCx4xX-_/
+O Instagram bloqueou a obtencao do conteudo. Nao foi possivel verificar ou
+replicar exatamente as funcoes mostradas no reel.
+
+LICENCAS E DISTRIBUICAO
+O ZIP contem o instalador e a ligacao local criada para este projeto.
+Nao redistribui o codigo ou os modelos do Open WebUI, Edge ou Ollama.
+O instalador obtem os pacotes dos distribuidores; as licencas respetivas aplicam-se.
+O nome e a interface Open WebUI mantem-se. O painel Jarvis e uma aplicacao local
+separada que comunica com o programa, sem alterar a sua marca.

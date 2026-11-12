@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0d12">
+<title>Rucodel · Produção</title>
+<style>
+:root{--bg:#0b0d12;--panel:#141821;--panel2:#1b2030;--line:#ffffff14;--ink:#eef0f4;--muted:#9aa1ad;--gold:#ddbd80;--green:#27c48a;--red:#ff6b6e;--amber:#f5a524;--font:'Segoe UI',Inter,Roboto,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:17px var(--font)}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+h1{margin:0;font-size:24px;font-weight:600;letter-spacing:.3px}h1 span{color:var(--gold)}
+.when{color:var(--muted);font-size:15px}
+main{padding:18px 22px;display:grid;gap:16px}
+.prod{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.box small{display:block;color:var(--muted);font-size:13px;letter-spacing:.4px;text-transform:uppercase}
+.box strong{display:block;font-size:38px;font-weight:700;line-height:1.1;margin-top:4px}
+.sectors{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.sec h2{margin:0 0 8px;font-size:22px;font-weight:650;color:var(--gold)}
+.big{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}.big strong{font-size:56px;font-weight:750;color:var(--amber);line-height:1}.big span{color:var(--muted)}
+.split{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.split div{background:var(--panel2);border-radius:12px;padding:8px 10px;text-align:center}
+.split b{display:block;font-size:26px}.split small{color:var(--muted);font-size:12px}
+.split .late b{color:var(--red)}.split .today b{color:var(--amber)}
+.list{font-size:15px;line-height:1.7}.list div{display:flex;justify-content:space-between;border-bottom:1px solid #ffffff08}
+.list h3{margin:10px 0 2px;font-size:13px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+.err{color:var(--muted)}
+.pin{min-height:100vh;display:grid;place-items:center}
+.pin form{width:min(360px,90vw);text-align:center}
+.pin input{width:100%;font-size:34px;letter-spacing:10px;text-align:center;padding:14px;border-radius:14px;border:1px solid #ffffff33;background:var(--panel);color:var(--ink);margin:16px 0}
+.pin button{width:100%;padding:16px;border-radius:14px;border:0;background:var(--gold);color:#1e1d18;font-size:20px;font-weight:700}
+.pin p{color:var(--red);min-height:1.4em}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const app=document.getElementById('app');
+const el=(t,c='',x='')=>{const e=document.createElement(t);if(c)e.className=c;if(x!=='')e.textContent=x;return e;};
+function pinScreen(msg){app.replaceChildren();const w=el('div','pin');const f=el('form');f.append(el('h1','','Rucodel · Produção'),el('div','when','Só consulta. Escreve o PIN.'));
+  const i=el('input');i.inputMode='numeric';i.autocomplete='one-time-code';i.maxLength=8;i.required=true;const b=el('button','','Entrar');b.type='submit';const p=el('p','',msg||'');f.append(i,b,p);w.append(f);app.append(w);i.focus();
+  f.onsubmit=async e=>{e.preventDefault();b.disabled=true;try{const r=await fetch('/entrar',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-Jarvis-Consulta':'1'},body:JSON.stringify({pin:i.value})});const j=await r.json();if(!r.ok)throw Error(j.erro||'Falhou.');load();}catch(err){p.textContent=err.message;b.disabled=false;i.value='';}};}
+function render(d){app.replaceChildren();const h=el('header');const t=el('h1');t.append(document.createTextNode('Rucodel · '),el('span','','Produção'));h.append(t,el('div','when','Atualizado às '+d.gerado+' · atualiza sozinho'));app.append(h);
+  const m=el('main');
+  (d.producao||[]).slice(0,1).forEach(p=>{const box=el('section');box.append(el('div','when','Contagem do programa · '+(p.rotulo||'')+(d.producao_lida?' (lida às '+d.producao_lida.slice(11,16)+')':'')));
+    const g=el('div','prod');[['Total',p.total],['Maquinadas',p.maquinadas],['Pintadas',p.pintadas],['Antes do torno',p.setor1],['Depois do torno',p.setor2]].forEach(([k,v])=>{if(v===undefined||v===null)return;const b=el('div','box');b.append(el('small','',k),el('strong','',String(v)));g.append(b);});box.append(g);m.append(box);});
+  const s=el('section','sectors');
+  (d.setores||[]).forEach(x=>{const c=el('div','box sec');c.append(el('h2','',x.nome));
+    if(x.erro){c.append(el('div','err',x.erro));s.append(c);return;}
+    const big=el('div','big');big.append(el('strong','',String(x.faltam)),el('span','','jantes por fazer de '+x.total+(x.a_decorrer?' · '+x.a_decorrer+' a decorrer':'')));c.append(big);
+    const sp=el('div','split');[['late','Atrasadas',x.atrasadas],['today','Hoje',x.hoje],['','Amanhã',x.amanha]].forEach(([cl,k,v])=>{const b=el('div',cl);b.append(el('b','',String(v)),el('small','',k));sp.append(b);});c.append(sp);
+    const l=el('div','list');
+    if(x.colaboradores&&x.colaboradores.length){l.append(el('h3','','Feitas hoje'));x.colaboradores.forEach(p=>{const r=el('div');r.append(el('span','',p.nome),el('b','',String(p.total)));l.append(r);});}
+    if(x.zonas&&x.zonas.length){l.append(el('h3','','Por zona (por fazer)'));x.zonas.slice(0,8).forEach(z=>{const r=el('div');r.append(el('span','',z.zona),el('b','',String(z.faltam)));l.append(r);});}
+    c.append(l);s.append(c);});
+  m.append(s);app.append(m);}
+async function load(){try{const r=await fetch('/dados',{credentials:'same-origin',cache:'no-store'});const j=await r.json();if(r.status===401)return pinScreen();if(!r.ok)throw Error(j.erro||'Sem dados.');render(j);}
+  catch(e){if(!app.querySelector('main'))app.replaceChildren(el('div','pin',e.message));}}
+load();setInterval(()=>{if(!document.hidden&&!app.querySelector('.pin'))load();},30000);
+</script>
+</body>
+</html>

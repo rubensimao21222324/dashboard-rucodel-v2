@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090c11">
+<title>Jarvis · Os teus ecrãs</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='22' fill='%23090b10' stroke='%23dfbc78' stroke-width='3'/%3E%3Cellipse cx='32' cy='32' rx='31' ry='11' fill='none' stroke='%23dfbc78' transform='rotate(-35 32 32)'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/screens.css?v=6.0">
+</head>
+<body>
+<div class="screen-shell">
+<header class="screen-topbar">
+<a class="screen-brand" href="/" aria-label="Abrir painel principal do Jarvis"><span class="orbit-mark" aria-hidden="true"></span><span><strong>J A R V I S</strong><small>O TEU UNIVERSO, EM CADA ECRÃ</small></span></a>
+<div class="screen-top-status"><i id="central-dot"></i><span id="central-status">A ligar à Central</span><span class="header-date" id="header-date"></span></div>
+<nav class="screen-actions" aria-label="Ações do ecrã"><button id="screen-refresh" title="Atualizar dados">↻ <span>Atualizar</span></button><button id="screen-customize" hidden>Personalizar</button><button id="screen-fullscreen" title="Ecrã inteiro">⛶ <span>Ecrã inteiro</span></button><a href="/screens" id="screen-home">Os meus ecrãs ↗</a></nav>
+</header>
+<main id="screen-main" aria-live="off">
+<section class="screen-intro" id="screen-intro"><span class="eyebrow">O TEU ESPAÇO · À TUA MANEIRA</span><h1>Um universo.<br><em>Vários pontos de vista.</em></h1><p>A conversa num ecrã. O teu dia noutro. Cada janela ligada à mesma Central, com a informação no lugar certo.</p><div class="intro-actions"><button class="gold-button" id="screen-new">+ Criar ecrã</button><a class="quiet-link" href="/">Voltar à conversa ↗</a></div></section>
+<section class="layout-cards" id="layout-cards" aria-label="Ecrãs guardados"><p class="muted">A carregar os teus ecrãs…</p></section>
+<section id="screen-heading" class="display-heading" hidden><div><span class="eyebrow">CENTRAL PESSOAL / <span id="screen-serial">01</span></span><h1 id="screen-title"></h1><p id="screen-subtitle"></p></div><div class="display-date"><span id="display-day"></span><small>EUROPE / LISBON</small></div></section>
+<section id="widget-grid" class="widget-grid" aria-label="Blocos do ecrã" hidden></section>
+<section class="setup-note" id="setup-note"><div class="note-symbol">↗</div><div><strong>Abre. Arrasta. Faz teu.</strong><p>Carrega em «Abrir janela», arrasta a janela para outro monitor e usa «Ecrã inteiro» ou F11. Em «Personalizar», escolhe os blocos, a ordem e as cores. As escolhas ficam guardadas na tua Central.</p></div><span class="note-tag">MESMO PC · MESMA CENTRAL</span></section>
+</main>
+<footer class="screen-footer"><span><i></i> INFORMAÇÃO COM ORIGEM</span><span id="screen-sync">A consultar a Central…</span><span>RUCODEL / PT</span></footer>
+</div>
+<dialog id="layout-editor" aria-labelledby="editor-title"><header class="editor-header"><div><span class="eyebrow">COMPOSIÇÃO DO ECRÃ</span><h2 id="editor-title">Ao teu gosto.</h2></div><button id="editor-close" aria-label="Fechar personalização">×</button></header><form id="layout-form"><div class="editor-fields"><label>Nome do ecrã<input id="layout-name" type="text" maxlength="60" required></label><label>Descrição<input id="layout-subtitle" type="text" maxlength="150"></label><div class="field-pair"><label>Disposição<select id="layout-columns"><option value="1">Uma coluna · vertical</option><option value="2">Duas colunas</option><option value="3">Três colunas · amplo</option></select></label><label>Cor<select id="layout-theme"><option value="gold">Dourado · o teu Jarvis</option><option value="ice">Azul · noite</option></select></label></div></div><div class="editor-section-heading"><h3>Os teus blocos</h3><span>1–8 por ecrã</span></div><div id="editor-widgets" class="editor-widgets"></div><div class="field-pair add-widget"><label class="sr-only" for="widget-type">Bloco a adicionar</label><select id="widget-type"></select><button id="widget-add" type="button">+ Adicionar bloco</button></div><p class="editor-help">Usa as setas para mudar a ordem. «Largo» ocupa duas colunas quando houver espaço. A Rucodel mostra notas guardadas; os indicadores de produção ainda precisam de uma fonte de dados.</p><div class="editor-submit"><p id="editor-feedback" role="status"></p><button class="gold-button" id="layout-save" type="submit">Guardar ecrã</button></div></form></dialog>
+<div id="screen-toast" class="screen-toast" role="status" hidden></div>
+<script type="module" src="/screens.js?v=6.0"></script>
+</body>
+</html>
